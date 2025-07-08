@@ -19,9 +19,17 @@ public class RSG {
     }
 
     // MODIFIES: this
-    // EFFECTS: generates a new string randomly, changes the generatedString
-    //          and returns it 
+    // EFFECTS: generates a new string randomly of a random length, changes the
+    //          generatedString and returns it 
     public String generateString() {
+        int randomNum = 0;
+        return generateString(randomNum);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: generates a new string randomly of length n, changes the 
+    //          generatedString and returns it 
+    public String generateString(int n) {
         String genereatedString = "";
         setGenerated(generatedString);
         return genereatedString;
@@ -37,5 +45,9 @@ public class RSG {
 
     private void setGenerated(String generatedString) {
         this.generatedString = generatedString;
+    }
+
+    public String getGeneratedString() {
+        return generatedString;
     }
 }
