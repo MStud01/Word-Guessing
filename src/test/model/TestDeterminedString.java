@@ -35,7 +35,7 @@ public class TestDeterminedString {
     }
 
     @Test
-    void setStatusUnchangedFalse() {
+    void testSetStatusUnchangedFalse() {
         assertTrue(testDS1.isNotWord());
         assertFalse(testDS1.isWord());
 
@@ -46,7 +46,7 @@ public class TestDeterminedString {
     }
 
     @Test
-    void setStatusUnchangedTrue() {
+    void testSetStatusUnchangedTrue() {
         assertTrue(testDS3.isWord());
         assertFalse(testDS3.isNotWord());
 
@@ -57,7 +57,7 @@ public class TestDeterminedString {
     }
 
     @Test
-    void setStatusChangedtoTrue() {
+    void testSetStatusChangedtoTrue() {
         assertTrue(testDS2.isNotWord());
         assertFalse(testDS2.isWord());
 
@@ -68,7 +68,7 @@ public class TestDeterminedString {
     }
 
     @Test
-    void setStatusChangedtoFalse() {
+    void testSetStatusChangedtoFalse() {
         assertTrue(testDS3.isWord());
         assertFalse(testDS3.isNotWord());
 
@@ -76,5 +76,26 @@ public class TestDeterminedString {
         
         assertTrue(testDS3.isNotWord());
         assertFalse(testDS3.isWord());
+    }
+
+    @Test
+    void testEquals() {
+        DeterminedString testDS4 = new DeterminedString("abc", true);
+        
+        assertTrue(testDS4.equals(testDS2));
+
+        assertEquals(testDS4.getString(), testDS2.getString());
+        assertFalse(testDS4.isWord() == testDS2.isWord());
+        assertFalse(testDS4.isNotWord() == testDS2.isNotWord());
+
+        testSetStatusChangedtoTrue();
+
+        assertEquals(testDS4.getString(), testDS2.getString());
+        assertTrue(testDS4.isWord() == testDS2.isWord());
+        assertTrue(testDS4.isNotWord() == testDS2.isNotWord());
+        
+        assertTrue(testDS4.equals(testDS2));
+
+        // TODO: add full coverage for equals() method
     }
 }
