@@ -28,7 +28,11 @@ public class RSG {
     }
 
     public static RSG getInstance() {
-        return rsg;
+        if (rsg == null) {
+            return new RSG();
+        } else {
+            return rsg;
+        }
     }
 
     private void setGenerated(String generatedString) {

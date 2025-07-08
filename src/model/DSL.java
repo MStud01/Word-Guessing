@@ -16,7 +16,11 @@ public class DSL {
     }
 
     public static DSL getInstance() {
-        return dsl;
+        if (dsl == null) {
+            return new DSL();
+        } else {
+            return dsl;
+        }
     }
 
     public void addDS(DeterminedString ds) {
