@@ -80,22 +80,50 @@ public class TestDeterminedString {
 
     @Test
     void testEquals() {
-        DeterminedString testDS4 = new DeterminedString("abc", true);
-        
-        assertTrue(testDS4.equals(testDS2));
+        testEquals(testDS2, new DeterminedString("abc", true));
+    }
 
-        assertEquals(testDS4.getString(), testDS2.getString());
-        assertFalse(testDS4.isWord() == testDS2.isWord());
-        assertFalse(testDS4.isNotWord() == testDS2.isNotWord());
+    @Test
+    static void testEquals(DeterminedString DS1, DeterminedString DS2) {
+        assertTrue(DS1.equals(DS1));
+        assertFalse(DS1.equals(null));
+        assertFalse(DS1.equals(DS1.getString()));
+        assertFalse(DS1.equals(new DeterminedString(DS1.getString() + "a", DS1.isWord())));
 
-        testSetStatusChangedtoTrue();
+        assertTrue(DS1.equals(DS2));
 
-        assertEquals(testDS4.getString(), testDS2.getString());
-        assertTrue(testDS4.isWord() == testDS2.isWord());
-        assertTrue(testDS4.isNotWord() == testDS2.isNotWord());
-        
-        assertTrue(testDS4.equals(testDS2));
+        if (DS1 == DS2) {
+            assertEquals(DS1.getString(), DS2.getString());
+            assertTrue(DS1.isWord() == DS2.isWord());
+            assertTrue(DS1.isNotWord() == DS2.isNotWord());
 
-        // TODO: add full coverage for equals() method
+            DS1.setStatus(DS1.isNotWord());
+
+            assertEquals(DS1.getString(), DS2.getString());
+            assertTrue(DS1.isWord() == DS2.isWord());
+            assertTrue(DS1.isNotWord() == DS2.isNotWord());
+        } else if (DS1.isWord() == DS2.isWord()) {
+            assertEquals(DS1.getString(), DS2.getString());
+            assertTrue(DS1.isWord() == DS2.isWord());
+            assertTrue(DS1.isNotWord() == DS2.isNotWord());
+
+            DS1.setStatus(DS1.isNotWord());
+
+            assertEquals(DS1.getString(), DS2.getString());
+            assertFalse(DS1.isWord() == DS2.isWord());
+            assertFalse(DS1.isNotWord() == DS2.isNotWord());
+        } else {
+            assertEquals(DS1.getString(), DS2.getString());
+            assertFalse(DS1.isWord() == DS2.isWord());
+            assertFalse(DS1.isNotWord() == DS2.isNotWord());
+
+            DS1.setStatus(DS1.isNotWord());
+
+            assertEquals(DS1.getString(), DS2.getString());
+            assertTrue(DS1.isWord() == DS2.isWord());
+            assertTrue(DS1.isNotWord() == DS2.isNotWord());
+        }
+
+        assertTrue(DS1.equals(DS2));
     }
 }
