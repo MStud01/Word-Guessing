@@ -12,6 +12,7 @@ public class DSL {
     
     private DSL() {
         determinedStrings = new ArrayList<DeterminedString>();
+        assert determinedStrings.size() == 0;
         dsl = this;
         assert dsl != null;
     }
@@ -28,7 +29,9 @@ public class DSL {
     // MODIFIES: this
     // EFFECTS: adds the given determined string to the list if it does not exist
     public void addDS(DeterminedString ds) {
-        determinedStrings.add(ds);
+        if (getDS(ds.getString()) == null) {
+            determinedStrings.add(ds);
+        }
         assert determinedStrings.size() > 0;
     }
 
@@ -52,14 +55,15 @@ public class DSL {
     //          ds exists in the list
     public DeterminedString getRecentDS() {
         assert determinedStrings != null;
-        return null;
+        return getDeterminedStrings().isEmpty() ? null : getDeterminedStrings().get(getDeterminedStrings().size() - 1) ;
     }
 
     // EFFECTS: returns the determined string that matches the given string 
     //          and null if no ds with the given string exists
     public DeterminedString getDS(String string) {
         assert determinedStrings != null;
-        return null;
+        DeterminedString checker = new DeterminedString(string, false);
+        return (getDeterminedStrings().indexOf(checker) == -1) ? null : getDeterminedStrings().get(getDeterminedStrings().indexOf(checker));
     }
 
     // REQUIRES: getDS(string) != null (i.e., the DS with given string exists)
@@ -67,7 +71,7 @@ public class DSL {
     //          that matches the given string 
     public boolean getDSstatus(String string) {
         assert (determinedStrings != null) && (getDS(string) != null);
-        return false;
+        return getDeterminedStrings().get(getDeterminedStrings().indexOf(new DeterminedString(string, false))).isWord();
     }
 
     public List<DeterminedString> getDeterminedStrings() {

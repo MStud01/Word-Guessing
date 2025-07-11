@@ -49,10 +49,7 @@ public class DeterminedString {
         if (getClass() != obj.getClass())
             return false;
         DeterminedString other = (DeterminedString) obj;
-        if (string == null) {
-            if (other.string != null)
-                return false;
-        } else if (!string.equals(other.string))
+        if (!string.equals(other.string))
             return false;
         return true;
     }
