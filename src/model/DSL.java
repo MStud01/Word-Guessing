@@ -51,7 +51,7 @@ public class DSL {
         assert determinedStrings.size() > 0;
     }
 
-    // EFFECTS: returns the previously added determind string and null if no 
+    // EFFECTS: returns the previously added determined string and null if no 
     //          ds exists in the list
     public DeterminedString getRecentDS() {
         assert determinedStrings != null;
@@ -67,7 +67,7 @@ public class DSL {
     }
 
     // REQUIRES: getDS(string) != null (i.e., the DS with given string exists)
-    // EFFECTS: returns the word status of the determind string
+    // EFFECTS: returns the word status of the determined string
     //          that matches the given string 
     public boolean getDSstatus(String string) {
         assert (determinedStrings != null) && (getDS(string) != null);
