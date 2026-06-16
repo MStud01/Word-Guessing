@@ -6,6 +6,7 @@ import java.util.Random;
 // creates strings from randomly generated chars
 public class RSG {
     private static RSG rsg;
+    private Random rand = new Random();
     private String generatedString;
 
     private RSG() {
@@ -30,9 +31,16 @@ public class RSG {
     // EFFECTS: generates a new string randomly of length n, changes the 
     //          generatedString and returns it 
     public String generateString(int n) {
-        String genereatedString = "";
-        setGenerated(generatedString);
-        return genereatedString;
+        String generated = "";
+        generated += (char) rand.nextInt(26) + 'A';
+        
+        for (int i = 1; i < n; i++) {
+            char c = (char) (rand.nextInt(26) + 'a');
+            generated += c;
+        }
+        
+        setGenerated(generated);
+        return getGeneratedString();
     }
 
     public static RSG getInstance() {
@@ -47,7 +55,7 @@ public class RSG {
         this.generatedString = generatedString;
     }
 
-    public String getGeneratedString() {
+    private String getGeneratedString() {
         return generatedString;
     }
 }
