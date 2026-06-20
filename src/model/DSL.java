@@ -1,5 +1,7 @@
 package model;
 
+import model.exceptions.DeterminedStringNotFoundException;
+
 import java.util.ArrayList;
 import java.util.List;
 // import java.util.Set;
@@ -66,11 +68,15 @@ public class DSL {
         return (getDeterminedStrings().indexOf(checker) == -1) ? null : getDeterminedStrings().get(getDeterminedStrings().indexOf(checker));
     }
 
-    // REQUIRES: getDS(string) != null (i.e., the DS with given string exists)
-    // EFFECTS: returns the word status of the determined string
-    //          that matches the given string 
-    public boolean getDSstatus(String string) {
-        assert (determinedStrings != null) && (getDS(string) != null);
+    // EFFECTS: returns the word status of the determined string that matches the given string 
+    //         and throws a DeterminedStringNotFoundException if no ds with the given string exists.
+    public boolean getDSstatus(String string) throws DeterminedStringNotFoundException {
+        assert (determinedStrings != null);
+        if (getDS(string) == null) {
+            throw new DeterminedStringNotFoundException("The string " + string + " was not found in the DSL.");
+        }
+        // TODO: Maybe try the below code instead
+        // return getDS(string).isWord();
         return getDeterminedStrings().get(getDeterminedStrings().indexOf(new DeterminedString(string, false))).isWord();
     }
 

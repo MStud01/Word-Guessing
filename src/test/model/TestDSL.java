@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import model.DSL;
 import model.DeterminedString;
+import model.exceptions.DeterminedStringNotFoundException;
 
 public class TestDSL {
     private DSL testDSLinstance;
@@ -184,14 +185,25 @@ public class TestDSL {
         assertNull(testDSLinstance.getDS(string));
     }
 
-    // TODO: to be tested when implementing robustness
-    // @Test
-    // void testGetDSStatusDoesNotExist() {
+    @Test
+    void testGetDSStatusDoesNotExist() {
+        assertEquals(0, testDSLinstance.getDeterminedStrings().size());
+        testGetRecentDSDoesNotExist();
+        testGetDSDoesNotExist("exception");
 
-    // }
+        try {
+            testDSLinstance.getDSstatus("exception");
+            // Should not reach here
+            fail("DeterminedStringNotFoundException should have been thrown.");
+        } catch (DeterminedStringNotFoundException dsnfe) {
+            // Test passed successfully
+        } finally {
+            testGetDSDoesNotExist("exception");
+        }
+    }
 
     @Test
-    void testGetDSStatusExistsFalse() {
+    void testGetDSStatusExistsFalse() throws DeterminedStringNotFoundException {
         assertEquals(0, testDSLinstance.getDeterminedStrings().size());
         testGetRecentDSDoesNotExist();
         testGetDSDoesNotExist("abc");
@@ -202,7 +214,7 @@ public class TestDSL {
     }
 
     @Test
-    void testGetDSStatusExistsTrue() {
+    void testGetDSStatusExistsTrue() throws DeterminedStringNotFoundException {
         assertEquals(0, testDSLinstance.getDeterminedStrings().size());
         testGetRecentDSDoesNotExist();
         testGetDSDoesNotExist("test");
