@@ -32,7 +32,7 @@ public class RSG {
     //          generatedString and returns it 
     public String generateString(int n) {
         String generated = "";
-        generated += (char) rand.nextInt(26) + 'A';
+        generated += (char) (rand.nextInt(26) + 'A');
         
         for (int i = 1; i < n; i++) {
             char c = (char) (rand.nextInt(26) + 'a');
@@ -45,10 +45,13 @@ public class RSG {
 
     public static RSG getInstance() {
         if (rsg == null) {
-            return new RSG();
-        } else {
-            return rsg;
-        }
+            rsg = new RSG();
+        } 
+        return rsg;
+    }
+
+    public void generateNewSeed() {
+        this.rand = new Random();
     }
 
     private void setGenerated(String generatedString) {
