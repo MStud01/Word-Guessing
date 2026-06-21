@@ -133,10 +133,10 @@ public class WordGuessingGame {
     // provides an end-of-game summary to the user of their performance in the game.
     public void bootGuessMode() {
         rsg.generateNewSeed();
-        // TODO: Consider changing the container type to HashMap to pair DeterminedStrings with their guessed status
         List<DeterminedString> generatedStrings = new ArrayList<DeterminedString>();
+        List<String> addedStrings = new ArrayList<String>(), changedStrings = new ArrayList<String>();
         
-        generateAndAddStrings(generatedStrings);
+        generateAndAddStrings(generatedStrings, addedStrings);
 
         printToConsole("Here is your set of generated strings:\n");
         int n = generatedStrings.size();
@@ -157,41 +157,43 @@ public class WordGuessingGame {
             String response = scanner.next();
             printToConsole("\n");
             if (response.equalsIgnoreCase("skip")) {
-                // TODO: Compare the status of all unguessed words with their versions that exist in the DSL
-                // and inform the user of any incorrect guesses.
+                // TODO: Compare the status of all unguessed strings with their versions
+                // that exist in the DSL and inform the user of any incorrect guesses.
+                // TODO: Will need a separate list to hold guessed strings
                 // Look into the above behaviour and see if the user does need to be informed.
                 break;
             }
             String selectedString = response;
-            if (generatedStrings.indexOf(new DeterminedString(selectedString, false)) == -1) {
+            int DSindex = generatedStrings.indexOf(new DeterminedString(selectedString, false)); 
+            if (DSindex == -1) {
                 printToConsole("That was not one of the randomly generated strings. Try typing it again.\n");
                 continue;
             }
             printToConsole("Do you think this string is a word? Type \"Yes\" if you do think so. Else type \"No\".\n");
             String guess = scanner.next();
             printToConsole("\n");
-            
-            boolean guessIsWord;
-                        
+
+            DeterminedString ds = generatedStrings.get(DSindex);
             if ((guess.toLowerCase().charAt(0) == 'y') || (guess.toLowerCase().charAt(0) == 'w')) {
                 printToConsole("You have guessed that the string is a word.\n");
-                guessIsWord = true;
+                ds.setStatus(true);
             } else if (guess.toLowerCase().charAt(0) == 'n') {
                 printToConsole("You have guessed that the string is not a word.\n");
-                guessIsWord = false;
+                ds.setStatus(true);
             } else {
                 printToConsole("That is an invalid choice. Please choose between the provided options.\n");
                 continue;
             }
 
             try {
-                if (dsl.getDSstatus(selectedString) == guessIsWord) {
-                    printToConsole("Your guess was correct!!\n");
+                if (dsl.getDSstatus(selectedString) == ds.isWord()) {
+                    printToConsole("Your guess was correct!!\n\n");
                 } else {
                     printToConsole("Unfortunately, uour guess was incorrect...\n");
-                    printToConsole("The string you guessed was actually " + (guessIsWord ? "not a word" : "a word") + ".\n");
-                    promptforChangeStatus(selectedString, guessIsWord);
-                    changeFlag = true;
+                    printToConsole("The string you guessed was actually " + (ds.isWord() ? "not a word" : "a word") + ".\n\n");
+                    int prevCStrings = changedStrings.size();
+                    promptforChangeStatus(selectedString, ds.isWord(), changedStrings);
+                    changeFlag = (changedStrings.size() != prevCStrings);
                 }
             } catch (DeterminedStringNotFoundException dsnfe) {
                 printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
@@ -200,14 +202,14 @@ public class WordGuessingGame {
             // TODO: Print the status of only the generated strings that were guessed
             if (changeFlag) {
                 if (n != 1) {
-                    printSummary(generatedStrings);
+                    printChangesSummary(generatedStrings, addedStrings, changedStrings);
                 }
                 changeFlag = false;
             }
             n--;
         }
         
-        printSummary(generatedStrings);
+        printFinalSummary(generatedStrings, addedStrings, changedStrings);
         
         printToConsole("Do you want to change the status of any of the above strings?\n");
         String response = scanner.next();
@@ -217,32 +219,36 @@ public class WordGuessingGame {
             printToConsole("Please type in the string that you wish to change the status of.\n");
             String selectedString = scanner.next();
             printToConsole("\n");
+            // TODO: Add logic to check whether the selectedString exists in genStrings
             try {
                 boolean status = dsl.getDSstatus(selectedString);
-                promptforChangeStatus(selectedString, !status);
-                changeFlag = true;
+                int prevCStrings = changedStrings.size();
+                promptforChangeStatus(selectedString, !status, changedStrings);
+                changeFlag = (changedStrings.size() != prevCStrings);
             } catch (DeterminedStringNotFoundException dsnfe) {
                 printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
             } finally {
-                printToConsole("Is that all? If you do not wish to make any more changes, type \"skip\".\n");
+                printToConsole("Is that all? If you do still wish to make any more changes, type \"continue\".\n");
                 response = scanner.next();
+                printToConsole("\n");
             }
-            // TODO: print updated summary after changing status of strings
             if (changeFlag) {
-                printSummary(generatedStrings);
+                printFinalSummary(generatedStrings, addedStrings, changedStrings);
+                // OR
+                // printChangesSummary(generatedStrings, addedStrings, changedStrings);
                 changeFlag = false;
             }
         }
         printToConsole("That is the end of this round for the Guessing Game Mode.\n\n");
         printToConsole("END OF ROUND SUMMARY:\n");
-        printSummary(generatedStrings);
+        printFinalSummary(generatedStrings, addedStrings, changedStrings);
     }
 
     // TODO: Complete the specifications for this function
     // REQUIRES:
     // MODIFIES:
     // EFFECTS:
-    public void generateAndAddStrings(List<DeterminedString> generatedStrings) {
+    public void generateAndAddStrings(List<DeterminedString> generatedStrings, List<String> addedStrings) {
         Random rng = new Random();
         printToConsole("How large do you should the set of strings be?\n");
         int setSize = scanner.nextInt();
@@ -258,7 +264,8 @@ public class WordGuessingGame {
             } catch (DeterminedStringNotFoundException dsnfe) {
                 // TODO: change the added status of the generatedString if it was added
                 dsl.addDS(generatedString, rng.nextBoolean());
-                printToConsole("The string " + generatedString + " was not found in the in-game collection, and has now been added to the in-game collection with a randomized status.\n");
+                addedStrings.add(generatedString);
+                printToConsole("The string " + generatedString + " was not found in the in-game collection, and has now been added to the in-game\ncollection with a randomized status.\n\n");
             }
         }
         printToConsole("\n");
@@ -268,7 +275,7 @@ public class WordGuessingGame {
     // REQUIRES:
     // MODIFIES:
     // EFFECTS: 
-    public void promptforChangeStatus(String selectedString, boolean newStatus) {
+    public void promptforChangeStatus(String selectedString, boolean newStatus, List<String> changedStrings) {
         printToConsole("Would you like to change the status of the string " + selectedString + " to " + (newStatus ? "" : "not ") + "be a word?\n");
         String prompt = scanner.next();
         printToConsole("\n");
@@ -277,8 +284,7 @@ public class WordGuessingGame {
         if ((prompt.toLowerCase().charAt(0) == 'y')) {
             printToConsole("You have chosen to change the status of this string.\n");
             dsl.getDS(selectedString).setStatus(newStatus);
-            // generatedStrings[selectedString] = true;
-            // TODO: implement above line to confirm that the statu so the ds has been changed
+            changedStrings.add(selectedString);
         } else if (prompt.toLowerCase().charAt(0) == 'n') {
             printToConsole("You have chosen to not change the status of this string.\n");
         } else {
@@ -286,27 +292,66 @@ public class WordGuessingGame {
         }
 
         printToConsole("The status of the string " + selectedString + " can be changed at the end of the game or in the second game mode.\n\n");
-        // TODO: Implement the functionality stated in the above line into the first and second game modes
+        // TODO: Implement the functionality stated in the above line into the second game mode
     }
 
-    // TODO: Complete the specifications for this function
-    // REQUIRES:
-    // MODIFIES:
-    // EFFECTS:
-    // Summary could possibly also indicate if the string existed in the DSL or not and if its recorded status was changed in the DSL
-    public void printSummary(List<DeterminedString> generatedStrings) {
+    // This function prints a summary of the guesses made by the user as changes are made to 
+    // the DSL (the in-game library), particularly relating to the strings generated this 
+    // round, whether if one of them was recently added or had their word status changed.
+    public void printChangesSummary(List<DeterminedString> generatedStrings, List<String> addedStrings, List<String> changedStrings) {
         for (int i = 0; i < generatedStrings.size(); i++) {
-            String string = generatedStrings.get(i).getString();
+            DeterminedString ds = generatedStrings.get(i);
+            printToConsole((i + 1) + ". " + ds.getString() + "\n");
+            printToConsole("Your Guess - "+ (ds.isWord() ? "A Word" : "Not A Word") +"\n");
+            if (addedStrings.contains(ds.getString())) {
+                printToConsole("This string was recently added into the in-game library in this round.\n");
+            }
+            if (changedStrings.contains(ds.getString())) {
+                // TODO: Update with dsl.getDSstatus(ds.getString()) to correctly reflect changes
+                printToConsole("The status of the string was changed from " + (ds.isWord() ? "not a word to a word" : "a word to not a word") +"\n");
+            }
+            printToConsole("\n");
+        }
+    }
+
+    // This function prints the final summary after all the guessed are made as well as at
+    // the end of the round. The function informs the user on their guesses and their total 
+    // score. It also displays whether the string existed in the DSL at the start of the 
+    // round and if its word status recorded in the DSL was changed in this round.
+    public void printFinalSummary(List<DeterminedString> generatedStrings, List<String> addedStrings, List<String> changedStrings) {
+        int score = 0, n = generatedStrings.size();
+        for (int i = 0; i < n; i++) {
+            DeterminedString ds = generatedStrings.get(i);
             try {
-                // TODO: Modify where it prints the status value from
-                printToConsole((i + 1) + ". " + string + "\tis\t" + (dsl.getDSstatus(string) ? "a Word" : "Not a Word")+ "\n");
-                printToConsole("Changed Status: " + "DEFAULT VALUE\n");
-                printToConsole("Recently added: "+ "DEFAULT VALUE\n\n");
+                printToConsole((i + 1) + ". " + ds.getString() + "   \t\t\tis\t\t" + (dsl.getDSstatus(ds.getString()) ? "a Word" : "Not a Word")+ "\n");
+                // TODO: Fix the printing issue that occurs when ds.string is at least 4 long
+                printToConsole("   You guessed that " + ds.getString() + "\t\tis\t\t" + (ds.isWord() ? "a Word" : "Not a Word")+ "\n");
+                printToConsole("   Recently added in this round? \t\t"+ (addedStrings.contains(ds.getString()) ? "YES": "NO") +"\n");
+                printToConsole("   Changed status in this round: \t" + (changedStrings.contains(ds.getString()) ? "Changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") :"Unchanged word status") +"\n\n");
+                score += (dsl.getDSstatus(ds.getString()) == ds.isWord() ? 1 : 0);
             } catch (DeterminedStringNotFoundException dsnfe) {
                 printToConsole("\nTHIS SHOULD NOT BE PRINTED LIKE EVER.\n");
-                dsnfe.printStackTrace();
             }
         }
+        printToConsole("Your score for this round of Guessing Mode is " + score + " out of " + n +".\n");
+        String performanceMessage = "";
+
+        // TODO: Fix delta check when score is exactly equal to grade cutoffs
+        double delta = 0.001, scoreOutOfTotal = (double) score/(double) n;
+        if ((scoreOutOfTotal - 0.90) >= delta) {
+            performanceMessage = " SUPEEEEEEEEEERRRRRRRRRB!!!!! Really Great Job For Reaching The Peak.";
+        } else if (((scoreOutOfTotal - 0.70) >= delta) && ((scoreOutOfTotal - 0.90) < delta)) {
+            performanceMessage = " excellent. I am sure that with practice, You Will Reach The Top\nSoon!";
+        } else if (((scoreOutOfTotal - 0.50) >= delta) && ((scoreOutOfTotal - 0.70) < delta)) {
+            performanceMessage = " statistically above average. You displayed a Pretty Well-Versed\nVocabulary..";
+        } else if (((scoreOutOfTotal - 0.30) >= delta) && ((scoreOutOfTotal - 0.50) < delta)) {
+            performanceMessage = " pretty.......   bad. You can do even better next time, I Am Sure.";
+        } else if (((scoreOutOfTotal - 0.05) >= delta) && ((scoreOutOfTotal - 0.30) < delta)) {
+            performanceMessage = "...... EH! I am sure that was a fluke. No way you are actually....\nTHIS BAD!!";
+        } else {
+            performanceMessage = "..............ehem~... WOW!!!! I am IMPRESSED to say the least. You defied all odds to achieve such an...... *softly* unbelievably low ...  score that I am concerned\nif this is how you decide the actions in your Life.";
+        }
+        printToConsole("Your peformance this round was" + performanceMessage + "\n\n");
     }
 
     // TODO: Complete the specifications for this function
