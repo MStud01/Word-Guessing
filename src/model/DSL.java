@@ -4,13 +4,13 @@ import model.exceptions.DeterminedStringNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
-// import java.util.Set;
 
-// Represents a singleton class representing a list of determined strings
+// This singletion class Represents the in-game library of strings in the form of a
+// list of determined strings 
 public class DSL {
     private static DSL dsl;
     private List<DeterminedString> determinedStrings;
-    // possible to use an array or a set instead (maybe?)
+    // TODO: Use a hashMap instead and remove determinedString class
     
     private DSL() {
         determinedStrings = new ArrayList<DeterminedString>();
@@ -75,9 +75,7 @@ public class DSL {
         if (getDS(string) == null) {
             throw new DeterminedStringNotFoundException("The string " + string + " was not found in the DSL.");
         }
-        // TODO: Maybe try the below code instead
-        // return getDS(string).isWord();
-        return getDeterminedStrings().get(getDeterminedStrings().indexOf(new DeterminedString(string, false))).isWord();
+        return getDS(string).isWord();
     }
 
     public List<DeterminedString> getDeterminedStrings() {
