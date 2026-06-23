@@ -84,7 +84,7 @@ public class WordGuessingGame {
     // and is prompted in the subsequent function call
     public void start() {
         printToConsole("Welcome to the Word Guessing Game!\n\n\n");
-        printToConsole("You can play 2 modes in this game:\n\n");
+        printToConsole("You can play 3 modes in this game:\n\n");
         printToConsole("Game Mode 1: Guessing Mode\nGuess whether a number of randomly generated string of English letters is a word or not.\n\n");
         printToConsole("Game Mode 2: Adding Mode\nAdd new words to the list of Determined Strings (DSL) - the in-game library\nof strings that verifies whether a string is a word or not.\n\n");
         printToConsole("Game Mode 3: Grouping Mode\nGroup a number of random English words depending on specific features.\n\n\n");
@@ -105,13 +105,13 @@ public class WordGuessingGame {
             input = scanner.next();
             printToConsole("\n");
 
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("guessing mode") || input.equalsIgnoreCase("guess")) {
+            if (input.startsWith("1") || input.equalsIgnoreCase("guessing mode") || input.equalsIgnoreCase("guess")) {
                 printToConsole("You have chosen the Guessing Mode.\n");
                 bootGuessMode();
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("adding mode") || input.equalsIgnoreCase("add")) {
+            } else if (input.startsWith("2") || input.equalsIgnoreCase("adding mode") || input.equalsIgnoreCase("add")) {
                 printToConsole("You have chosen the Adding Mode.\n");
                 bootAddMode();
-            } else if (input.equalsIgnoreCase("3") || input.equalsIgnoreCase("grouping mode") || input.equalsIgnoreCase("group")) {
+            } else if (input.startsWith("3") || input.equalsIgnoreCase("grouping mode") || input.equalsIgnoreCase("group")) {
                 printToConsole("You have chosen the Grouping Mode.\n");
                 bootGroupMode();
             } else if (!input.equalsIgnoreCase("quit")) {
@@ -141,15 +141,11 @@ public class WordGuessingGame {
         printToConsole("Here is your set of generated strings:\n");
         int n = generatedStrings.size();
         for (int i = 0; i < n; i++) {
-            // TODO: Update the printing here so it looks more neat, possibly using printf.
-            // 98 characters fit in the termnial
-            // TODO: Possibly replace this with printSummary();
-            printToConsole((i + 1) + "." +  generatedStrings.get(i).getString() + ((i % 5 == 4) ? "\n" : "\t"));
+            printToConsole(String.format("%-3s %-20s",Integer.toString(i + 1) + ".", generatedStrings.get(i).getString()) + ((i % 4 == 3) ? "\n" : " "));
         }
 
-        printToConsole("\nNow, you can guess whether each string is a word or not.\n");
-        // TODO: Might need to implement better logic to notify user of the generatedStrings
-        // after choosing each string
+        printToConsole("\n\nNow, you can guess whether each string is a word or not.\n");
+
         boolean changeFlag = false;
         while (n > 0) {
             printToConsole("Choose a string from the generated strings above and type it in to guess.\n");
@@ -157,10 +153,6 @@ public class WordGuessingGame {
             String response = scanner.next();
             printToConsole("\n");
             if (response.equalsIgnoreCase("skip")) {
-                // TODO: Compare the status of all unguessed strings with their versions
-                // that exist in the DSL and inform the user of any incorrect guesses.
-                // TODO: Will need a separate list to hold guessed strings
-                // Look into the above behaviour and see if the user does need to be informed.
                 break;
             }
             String selectedString = response;
@@ -179,7 +171,7 @@ public class WordGuessingGame {
                 ds.setStatus(true);
             } else if (guess.toLowerCase().charAt(0) == 'n') {
                 printToConsole("You have guessed that the string is not a word.\n");
-                ds.setStatus(true);
+                ds.setStatus(false);
             } else {
                 printToConsole("That is an invalid choice. Please choose between the provided options.\n");
                 continue;
@@ -199,7 +191,6 @@ public class WordGuessingGame {
                 printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
                 continue;
             }
-            // TODO: Print the status of only the generated strings that were guessed
             if (changeFlag) {
                 if (n != 1) {
                     printChangesSummary(generatedStrings, addedStrings, changedStrings);
@@ -211,15 +202,25 @@ public class WordGuessingGame {
         
         printFinalSummary(generatedStrings, addedStrings, changedStrings);
         
-        printToConsole("Do you want to change the status of any of the above strings?\n");
+        printToConsole("Are you satisfied with the above results?\n");
         String response = scanner.next();
         printToConsole("\n");
 
-        while ((response.toLowerCase().charAt(0) == 'y') || (response.toLowerCase().charAt(0) == 'c')) {
+        while ((response.toLowerCase().charAt(0) == 'n') || (response.toLowerCase().charAt(0) == 'c')) {
+            if (changeFlag) {
+                printFinalSummary(generatedStrings, addedStrings, changedStrings);
+                // OR
+                // printChangesSummary(generatedStrings, addedStrings, changedStrings);
+                changeFlag = false;
+            }
             printToConsole("Please type in the string that you wish to change the status of.\n");
             String selectedString = scanner.next();
             printToConsole("\n");
-            // TODO: Add logic to check whether the selectedString exists in genStrings
+            if (generatedStrings.indexOf(new DeterminedString(selectedString, false)) == -1) {
+                printToConsole("That was an invalid string. Try typing in one of the generated strings below.\n\n");
+                printFinalSummary(generatedStrings, addedStrings, changedStrings);
+                continue;
+            }
             try {
                 boolean status = dsl.getDSstatus(selectedString);
                 int prevCStrings = changedStrings.size();
@@ -228,16 +229,11 @@ public class WordGuessingGame {
             } catch (DeterminedStringNotFoundException dsnfe) {
                 printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
             } finally {
-                printToConsole("Is that all? If you do still wish to make any more changes, type \"continue\".\n");
+                printToConsole("Is that all??? If you do still wish to make any more changes, type \"continue\".\n");
                 response = scanner.next();
                 printToConsole("\n");
             }
-            if (changeFlag) {
-                printFinalSummary(generatedStrings, addedStrings, changedStrings);
-                // OR
-                // printChangesSummary(generatedStrings, addedStrings, changedStrings);
-                changeFlag = false;
-            }
+            
         }
         printToConsole("That is the end of this round for the Guessing Game Mode.\n\n");
         printToConsole("END OF ROUND SUMMARY:\n");
@@ -255,14 +251,21 @@ public class WordGuessingGame {
         printToConsole("\n");
 
         for (int i = 0; i < setSize; i++) {
-            printToConsole("How long do you wish the string to be?\n");
-            String generatedString = rsg.generateString(scanner.nextInt());
+            // The Idea is not type in a number greater than 20.
+            // Type in a string that is not longer than 20 English letters.
+            printToConsole("Pick a number between 1 and 20.\n");
+            int len = scanner.nextInt();
+            String generatedString = rsg.generateString(len);
             printToConsole("\n");
-            generatedStrings.add(new DeterminedString(generatedString, false));
+            DeterminedString ds = new DeterminedString(generatedString, false);
+            while (generatedStrings.contains(ds)) {
+                generatedString = rsg.generateString(len);
+                ds = new DeterminedString(generatedString, false);
+            }
+            generatedStrings.add(ds);
             try {
                 dsl.getDSstatus(generatedString);
             } catch (DeterminedStringNotFoundException dsnfe) {
-                // TODO: change the added status of the generatedString if it was added
                 dsl.addDS(generatedString, rng.nextBoolean());
                 addedStrings.add(generatedString);
                 printToConsole("The string " + generatedString + " was not found in the in-game collection, and has now been added to the in-game\ncollection with a randomized status.\n\n");
@@ -280,7 +283,6 @@ public class WordGuessingGame {
         String prompt = scanner.next();
         printToConsole("\n");
 
-        // TODO: Revise the following generated if block
         if ((prompt.toLowerCase().charAt(0) == 'y')) {
             printToConsole("You have chosen to change the status of this string.\n");
             dsl.getDS(selectedString).setStatus(newStatus);
@@ -292,7 +294,6 @@ public class WordGuessingGame {
         }
 
         printToConsole("The status of the string " + selectedString + " can be changed at the end of the game or in the second game mode.\n\n");
-        // TODO: Implement the functionality stated in the above line into the second game mode
     }
 
     // This function prints a summary of the guesses made by the user as changes are made to 
@@ -307,8 +308,11 @@ public class WordGuessingGame {
                 printToConsole("This string was recently added into the in-game library in this round.\n");
             }
             if (changedStrings.contains(ds.getString())) {
-                // TODO: Update with dsl.getDSstatus(ds.getString()) to correctly reflect changes
-                printToConsole("The status of the string was changed from " + (ds.isWord() ? "not a word to a word" : "a word to not a word") +"\n");
+                try {
+                    printToConsole("The status of the string was changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") +"\n");
+                } catch (DeterminedStringNotFoundException dsnfe) {
+                    printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN.\n");
+                }
             }
             printToConsole("\n");
         }
@@ -323,11 +327,10 @@ public class WordGuessingGame {
         for (int i = 0; i < n; i++) {
             DeterminedString ds = generatedStrings.get(i);
             try {
-                printToConsole((i + 1) + ". " + ds.getString() + "   \t\t\tis\t\t" + (dsl.getDSstatus(ds.getString()) ? "a Word" : "Not a Word")+ "\n");
-                // TODO: Fix the printing issue that occurs when ds.string is at least 4 long
-                printToConsole("   You guessed that " + ds.getString() + "\t\tis\t\t" + (ds.isWord() ? "a Word" : "Not a Word")+ "\n");
-                printToConsole("   Recently added in this round? \t\t"+ (addedStrings.contains(ds.getString()) ? "YES": "NO") +"\n");
-                printToConsole("   Changed status in this round: \t" + (changedStrings.contains(ds.getString()) ? "Changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") :"Unchanged word status") +"\n\n");
+                printToConsole(String.format("%-3s String %-32s   is\t\t%s\n", Integer.toString(i + 1)+".", ds.getString(), (dsl.getDSstatus(ds.getString()) ? "a Word" : "Not a Word")));
+                printToConsole(String.format("    You guessed that %-22s   is\t\t%s\n", ds.getString(),(ds.isWord() ? "a Word" : "Not a Word")));
+                printToConsole("    Recently added in this round?\t\t       "+ (addedStrings.contains(ds.getString()) ? "YES": "NO") +"\n");
+                printToConsole("    Changed status in this round:\t      " + (changedStrings.contains(ds.getString()) ? "Changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") :"Unchanged word status") +"\n\n");
                 score += (dsl.getDSstatus(ds.getString()) == ds.isWord() ? 1 : 0);
             } catch (DeterminedStringNotFoundException dsnfe) {
                 printToConsole("\nTHIS SHOULD NOT BE PRINTED LIKE EVER.\n");
@@ -336,20 +339,19 @@ public class WordGuessingGame {
         printToConsole("Your score for this round of Guessing Mode is " + score + " out of " + n +".\n");
         String performanceMessage = "";
 
-        // TODO: Fix delta check when score is exactly equal to grade cutoffs
-        double delta = 0.001, scoreOutOfTotal = (double) score/(double) n;
-        if ((scoreOutOfTotal - 0.90) >= delta) {
+        double delta = 0.000001, scoreOutOfTotal = (double) score/(double) n;
+        if (((scoreOutOfTotal - 0.90) >= delta) || (Math.abs(scoreOutOfTotal - 0.90) <= delta)) {
             performanceMessage = " SUPEEEEEEEEEERRRRRRRRRB!!!!! Really Great Job For Reaching The Peak.";
-        } else if (((scoreOutOfTotal - 0.70) >= delta) && ((scoreOutOfTotal - 0.90) < delta)) {
+        } else if ((((scoreOutOfTotal - 0.70) >= delta) || (Math.abs(scoreOutOfTotal - 0.70) <= delta)) && (scoreOutOfTotal < 0.90)) {
             performanceMessage = " excellent. I am sure that with practice, You Will Reach The Top\nSoon!";
-        } else if (((scoreOutOfTotal - 0.50) >= delta) && ((scoreOutOfTotal - 0.70) < delta)) {
+        } else if ((((scoreOutOfTotal - 0.50) >= delta) || (Math.abs(scoreOutOfTotal - 0.50) <= delta)) && (scoreOutOfTotal < 0.70)) {
             performanceMessage = " statistically above average. You displayed a Pretty Well-Versed\nVocabulary..";
-        } else if (((scoreOutOfTotal - 0.30) >= delta) && ((scoreOutOfTotal - 0.50) < delta)) {
+        } else if ((((scoreOutOfTotal - 0.30) >= delta) || (Math.abs(scoreOutOfTotal - 0.30) <= delta)) && (scoreOutOfTotal < 0.50)) {
             performanceMessage = " pretty.......   bad. You can do even better next time, I Am Sure.";
-        } else if (((scoreOutOfTotal - 0.05) >= delta) && ((scoreOutOfTotal - 0.30) < delta)) {
+        } else if ((((scoreOutOfTotal - 0.05) >= delta) || (Math.abs(scoreOutOfTotal - 0.05) <= delta)) && (scoreOutOfTotal < 0.30)) {
             performanceMessage = "...... EH! I am sure that was a fluke. No way you are actually....\nTHIS BAD!!";
         } else {
-            performanceMessage = "..............ehem~... WOW!!!! I am IMPRESSED to say the least. You defied all odds to achieve such an...... *softly* unbelievably low ...  score that I am concerned\nif this is how you decide the actions in your Life.";
+            performanceMessage = "..............ehem~... WOW!!!! I am IMPRESSED to say the least. You\ndefied all odds to achieve such an...... *softly* unbelievably low ...  score that I am concerned\nif this is how you decide the actions in your Life.";
         }
         printToConsole("Your peformance this round was" + performanceMessage + "\n\n");
     }
@@ -358,6 +360,8 @@ public class WordGuessingGame {
     // REQUIRES:
     // MODIFIES:
     // EFFECTS:
+    // Implement into the second game mode the feature of being able to change status of any
+    // string in the DSL
     public void bootAddMode() {}
 
     // TODO: Complete the specifications for this function
