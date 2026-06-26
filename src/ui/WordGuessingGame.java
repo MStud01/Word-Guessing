@@ -12,14 +12,11 @@ import ui.gamemodes.GameModes;
 //                      1) determine whether a set of randomly generated strings is an actual word or not, and
 //                      2) add new words to DSL (the list of Determined Strings)
 
-// TODO: Change WordGuessingGame to WordGame or something similar
+// TODO: Change the name of WordGuessingGame to WordGame or something similar
 public class WordGuessingGame {
     // private static final String DSLfile = "";
     private static DSL dsl = DSL.getInstance();
     private static int gameModeCount = GameModes.values().length;  
-    // TODO: Look into if this local variable can be used to print the menu in an error-proof
-    // manner. Also look into executing a "CTRL+F" command to search for "boot___Mode" funcs
-    // and add them up so they total upto the total number of game modes. 
 
     // TODO: implement a list of gameModes so that it can be easily iterated over to access
     // their fields and set currGameMode
@@ -36,6 +33,9 @@ public class WordGuessingGame {
     private static GameModes currGameMode;
 
     public WordGuessingGame() {
+        // TODO: Change the delimiter if necessary
+        // UserIO.INSTANCE.scanner.useDelimiter("");
+        // loadDSL(dsl);
         UserSettings.initializeSettings();
         start();
 
@@ -72,7 +72,7 @@ public class WordGuessingGame {
     // of the presented options, upon which the user is prompted until the right input
     // has been entered by the user.
     public void processInputs() {
-        String input = "";
+        String input = "message";
 
         while (!input.equalsIgnoreCase("quit")) {
             UserIO.INSTANCE.printToConsole("What game mode do you wish to play?\n");
@@ -80,11 +80,14 @@ public class WordGuessingGame {
             UserIO.INSTANCE.printToConsole("\n");
 
             if (input.matches("^[1-"+ Integer.toString(gameModeCount) +"]$")) {
-               GameModes.values()[Integer.parseInt(input) - 1].getGameModeBooter().run();;
+                currGameMode = GameModes.values()[Integer.parseInt(input) - 1];
+                UserIO.INSTANCE.printToConsole("You have chosen the " + currGameMode.getTitle() + ".\n");
+                currGameMode.getGameModeBooter().run();
             } else {
                 for (GameModes gm : GameModes.values()) {
-                    if (input.equalsIgnoreCase(gm.getTitle())) {
-                        UserIO.INSTANCE.printToConsole("You have chosen the " + gm.getTitle() + "\n");
+                    // TODO: Fix the error when the entire game mode title is entered by the user 
+                    if (input.equalsIgnoreCase(gm.getTitle().substring(0, gm.getTitle().indexOf(" ")))) {
+                        UserIO.INSTANCE.printToConsole("You have chosen the " + gm.getTitle() + ".\n");
                         currGameMode = gm;
                         currGameMode.getGameModeBooter().run();
                         break;
@@ -94,6 +97,7 @@ public class WordGuessingGame {
                     UserIO.INSTANCE.printToConsole("That is an invalid choice. Please choose between the provided options.\n");
                 }
             }
+            currGameMode = null;
         }
 
         UserIO.INSTANCE.printToConsole("CHOICE: QUIT\n\n");

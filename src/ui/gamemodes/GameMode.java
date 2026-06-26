@@ -5,6 +5,7 @@ package ui.gamemodes;
 // It has specific methods that are implemented in each of the game modes
 
 // TODO: Fix the inheritance for this class
+// TODO: FIx the visibility anad the compilation-time of the methods
 public abstract class GameMode {
     protected static int gameModeNum;
     protected static String gameModeTitle;

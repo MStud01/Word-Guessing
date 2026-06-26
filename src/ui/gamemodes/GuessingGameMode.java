@@ -21,6 +21,7 @@ public class GuessingGameMode extends GameMode {
     
     private static RSG rsg = RSG.getInstance();
     private static DSL dsl = DSL.getInstance();
+    // TODO: Fix the persistance of generatedString over rounds
     private static List<DeterminedString> generatedStrings = new ArrayList<DeterminedString>();
     private static List<String> addedStrings = new ArrayList<String>(), changedStrings = new ArrayList<String>();
 
@@ -138,6 +139,10 @@ public class GuessingGameMode extends GameMode {
         UserIO.INSTANCE.printToConsole("That is the end of this round for the Guessing Game Mode.\n\n");
         UserIO.INSTANCE.printToConsole("END OF ROUND SUMMARY:\n");
         printFinalSummary(generatedStrings, addedStrings, changedStrings);
+        generatedStrings.clear();
+        addedStrings.clear();
+        changedStrings.clear();
+        // TODO: temp fix for persistance of strings fields
     }
 
     // TODO: Complete the specifications for this function
