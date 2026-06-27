@@ -13,7 +13,6 @@ import ui.UserIO;
 
 // TODO: Complete specifications for this class
 // TODO: Fix the methods inherited in this class
-// TODO: Update the method signatures in this class
 public class GuessingGameMode extends GameMode {
     static final int gameModeNum = 1;
     static final String gameModeTitle = "Guessing Mode";
@@ -37,7 +36,7 @@ public class GuessingGameMode extends GameMode {
     static void bootGameMode() {
         rsg.generateNewSeed();
         
-        generateAndAddStrings(generatedStrings, addedStrings);
+        generateAndAddStrings();
 
         UserIO.INSTANCE.printToConsole("Here is your set of generated strings:\n");
         int n = generatedStrings.size();
@@ -85,7 +84,7 @@ public class GuessingGameMode extends GameMode {
                     UserIO.INSTANCE.printToConsole("Unfortunately, uour guess was incorrect...\n");
                     UserIO.INSTANCE.printToConsole("The string you guessed was actually " + (ds.isWord() ? "not a word" : "a word") + ".\n\n");
                     int prevCStrings = changedStrings.size();
-                    promptforChangeStatus(selectedString, ds.isWord(), changedStrings);
+                    promptforChangeStatus(selectedString, ds.isWord());
                     changeFlag = (changedStrings.size() != prevCStrings);
                 }
             } catch (DeterminedStringNotFoundException dsnfe) {
@@ -94,14 +93,14 @@ public class GuessingGameMode extends GameMode {
             }
             if (changeFlag) {
                 if (n != 1) {
-                    printChangesSummary(generatedStrings, addedStrings, changedStrings);
+                    printChangesSummary();
                 }
                 changeFlag = false;
             }
             n--;
         }
         
-        printFinalSummary(generatedStrings, addedStrings, changedStrings);
+        printFinalSummary();
         
         UserIO.INSTANCE.printToConsole("Are you satisfied with the above results?\n");
         String response = UserIO.INSTANCE.scanner.nextLine();
@@ -109,9 +108,9 @@ public class GuessingGameMode extends GameMode {
 
         while ((response.toLowerCase().charAt(0) == 'n') || (response.toLowerCase().charAt(0) == 'c')) {
             if (changeFlag) {
-                printFinalSummary(generatedStrings, addedStrings, changedStrings);
+                printFinalSummary();
                 // OR
-                // printChangesSummary(generatedStrings, addedStrings, changedStrings);
+                // printChangesSummary();
                 changeFlag = false;
             }
             UserIO.INSTANCE.printToConsole("Please type in the string that you wish to change the status of.\n");
@@ -119,13 +118,13 @@ public class GuessingGameMode extends GameMode {
             UserIO.INSTANCE.printToConsole("\n");
             if (generatedStrings.indexOf(new DeterminedString(selectedString, false)) == -1) {
                 UserIO.INSTANCE.printToConsole("That was an invalid string. Try typing in one of the generated strings below.\n\n");
-                printFinalSummary(generatedStrings, addedStrings, changedStrings);
+                printFinalSummary();
                 continue;
             }
             try {
                 boolean status = dsl.getDSstatus(selectedString);
                 int prevCStrings = changedStrings.size();
-                promptforChangeStatus(selectedString, !status, changedStrings);
+                promptforChangeStatus(selectedString, !status);
                 changeFlag = (changedStrings.size() != prevCStrings);
             } catch (DeterminedStringNotFoundException dsnfe) {
                 UserIO.INSTANCE.printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
@@ -138,7 +137,7 @@ public class GuessingGameMode extends GameMode {
         }
         UserIO.INSTANCE.printToConsole("That is the end of this round for the Guessing Game Mode.\n\n");
         UserIO.INSTANCE.printToConsole("END OF ROUND SUMMARY:\n");
-        printFinalSummary(generatedStrings, addedStrings, changedStrings);
+        printFinalSummary();
         generatedStrings.clear();
         addedStrings.clear();
         changedStrings.clear();
@@ -149,7 +148,7 @@ public class GuessingGameMode extends GameMode {
     // REQUIRES:
     // MODIFIES:
     // EFFECTS:
-    private static void generateAndAddStrings(List<DeterminedString> generatedStrings, List<String> addedStrings) {
+    private static void generateAndAddStrings() {
         Random rng = new Random();
         UserIO.INSTANCE.printToConsole("How large do you should the set of strings be?\n");
         int setSize = Integer.parseInt(UserIO.INSTANCE.scanner.nextLine());
@@ -183,7 +182,7 @@ public class GuessingGameMode extends GameMode {
     // REQUIRES:
     // MODIFIES:
     // EFFECTS: 
-    private static void promptforChangeStatus(String selectedString, boolean newStatus, List<String> changedStrings) {
+    private static void promptforChangeStatus(String selectedString, boolean newStatus) {
         UserIO.INSTANCE.printToConsole("Would you like to change the status of the string " + selectedString + " to " + (newStatus ? "" : "not ") + "be a word?\n");
         String prompt = UserIO.INSTANCE.scanner.nextLine();
         UserIO.INSTANCE.printToConsole("\n");
@@ -204,7 +203,7 @@ public class GuessingGameMode extends GameMode {
     // This function prints a summary of the guesses made by the user as changes are made to 
     // the DSL (the in-game library), particularly relating to the strings generated this 
     // round, whether if one of them was recently added or had their word status changed.
-    private static void printChangesSummary(List<DeterminedString> generatedStrings, List<String> addedStrings, List<String> changedStrings) {
+    private static void printChangesSummary() {
         for (int i = 0; i < generatedStrings.size(); i++) {
             DeterminedString ds = generatedStrings.get(i);
             UserIO.INSTANCE.printToConsole((i + 1) + ". " + ds.getString() + "\n");
@@ -227,7 +226,7 @@ public class GuessingGameMode extends GameMode {
     // the end of the round. The function informs the user on their guesses and their total 
     // score. It also displays whether the string existed in the DSL at the start of the 
     // round and if its word status recorded in the DSL was changed in this round.
-    private static void printFinalSummary(List<DeterminedString> generatedStrings, List<String> addedStrings, List<String> changedStrings) {
+    private static void printFinalSummary() {
         int score = 0, n = generatedStrings.size();
         for (int i = 0; i < n; i++) {
             DeterminedString ds = generatedStrings.get(i);
