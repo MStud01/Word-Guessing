@@ -5,7 +5,7 @@ package ui.gamemodes;
 public class AddingGameMode extends GameMode {
     static int gameModeNum = 3;
     static String gameModeTitle = "Adding Mode";
-    static String gameMenuIntroMsg = "Add new words to the list of Determined Strings (DSL) - the in-game library of strings that verifies whether a string is a word or not.";
+    static String gameMenuIntroMsg = "Add new words to the in-game library of strings that verifies whether a string is a word or not.";
 
     
     // TODO: Complete the specifications for this function

@@ -4,6 +4,8 @@ package ui.gamemodes;
 // that explains the rules of the game
 // It has specific methods that are implemented in each of the game modes
 
+// TODO: Abstract out some methods into model so not everything is in ui
+
 // TODO: Fix the inheritance for this class
 // TODO: FIx the visibility anad the compilation-time of the methods
 public abstract class GameMode {
