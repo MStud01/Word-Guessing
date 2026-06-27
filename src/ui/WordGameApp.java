@@ -12,14 +12,11 @@ import ui.gamemodes.GameModes;
 //                      1) determine whether a set of randomly generated strings is an actual word or not, and
 //                      2) add new words to DSL (the list of Determined Strings)
 
-// TODO: Change the name of WordGuessingGame to WordGame or something similar
-public class WordGuessingGame {
+public class WordGameApp {
     // private static final String DSLfile = "";
     private static DSL dsl = DSL.getInstance();
-    private static int gameModeCount = GameModes.values().length;  
-
-    // TODO: implement a list of gameModes so that it can be easily iterated over to access
-    // their fields and set currGameMode
+    private static GameModes[] gameModes = GameModes.values();
+    private static int gameModeCount = gameModes.length;  
 
     /** Looked into not needing to hardcode the list of gamemodes and found some interesting
      * trove of user-defined libraries that improved on the Reflection API's capabilitie:
@@ -32,7 +29,7 @@ public class WordGuessingGame {
 
     private static GameModes currGameMode;
 
-    public WordGuessingGame() {
+    public WordGameApp() {
         // loadDSL(dsl);
         UserSettings.initializeSettings();
         start();
@@ -54,10 +51,10 @@ public class WordGuessingGame {
     // Boots up the start menu where the user is introduced to the game and the game modes
     // and is prompted in the subsequent function call
     public void start() {
-        UserIO.INSTANCE.printToConsole("Welcome to the Word Guessing Game!\n\n\n");
+        UserIO.INSTANCE.printToConsole("Welcome to the Word Game!\n\n\n");
         UserIO.INSTANCE.printToConsole("You can play " + gameModeCount + " modes in this game:\n\n");
         for (int i = 1; i <= gameModeCount; i++) {
-            GameModes gm = GameModes.values()[i - 1];
+            GameModes gm = gameModes[i - 1];
             UserIO.INSTANCE.printToConsole("Game Mode " + i + ": " + gm.getTitle() + "\n" + gm.getGameMenuIntroMsg() + "\n\n");
         }
         UserIO.INSTANCE.printToConsole("To play, choose between the above game modes.\n");
@@ -79,11 +76,11 @@ public class WordGuessingGame {
             UserIO.INSTANCE.printToConsole("\n");
 
             if (input.matches("^[1-"+ Integer.toString(gameModeCount) +"]$")) {
-                currGameMode = GameModes.values()[Integer.parseInt(input) - 1];
+                currGameMode = gameModes[Integer.parseInt(input) - 1];
                 UserIO.INSTANCE.printToConsole("You have chosen the " + currGameMode.getTitle() + ".\n");
                 currGameMode.getGameModeBooter().run();
             } else {
-                for (GameModes gm : GameModes.values()) {
+                for (GameModes gm : gameModes) {
                     // TODO: Consider changing the game mode names to ones excluding the -ing suffixes
                     // Or comment the commented if condition below
                     String expectedInputString = gm.getTitle().indexOf("ing") == -1 ? gm.getTitle().substring(0, gm.getTitle().indexOf(" ")) : gm.getTitle().substring(0, gm.getTitle().indexOf("ing"));
