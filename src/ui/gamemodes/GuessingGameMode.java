@@ -51,7 +51,7 @@ public class GuessingGameMode extends GameMode {
         while (n > 0) {
             UserIO.INSTANCE.printToConsole("Choose a string from the generated strings above and type it in to guess.\n");
             UserIO.INSTANCE.printToConsole("Or you can type \"skip\" if you think the remainder of the strings cannot possibly be English words.\n");
-            String response = UserIO.INSTANCE.scanner.next();
+            String response = UserIO.INSTANCE.scanner.nextLine();
             UserIO.INSTANCE.printToConsole("\n");
             if (response.equalsIgnoreCase("skip")) {
                 break;
@@ -63,7 +63,7 @@ public class GuessingGameMode extends GameMode {
                 continue;
             }
             UserIO.INSTANCE.printToConsole("Do you think this string is a word? Type \"Yes\" if you do think so. Else type \"No\".\n");
-            String guess = UserIO.INSTANCE.scanner.next();
+            String guess = UserIO.INSTANCE.scanner.nextLine();
             UserIO.INSTANCE.printToConsole("\n");
 
             DeterminedString ds = generatedStrings.get(DSindex);
@@ -104,7 +104,7 @@ public class GuessingGameMode extends GameMode {
         printFinalSummary(generatedStrings, addedStrings, changedStrings);
         
         UserIO.INSTANCE.printToConsole("Are you satisfied with the above results?\n");
-        String response = UserIO.INSTANCE.scanner.next();
+        String response = UserIO.INSTANCE.scanner.nextLine();
         UserIO.INSTANCE.printToConsole("\n");
 
         while ((response.toLowerCase().charAt(0) == 'n') || (response.toLowerCase().charAt(0) == 'c')) {
@@ -115,7 +115,7 @@ public class GuessingGameMode extends GameMode {
                 changeFlag = false;
             }
             UserIO.INSTANCE.printToConsole("Please type in the string that you wish to change the status of.\n");
-            String selectedString = UserIO.INSTANCE.scanner.next();
+            String selectedString = UserIO.INSTANCE.scanner.nextLine();
             UserIO.INSTANCE.printToConsole("\n");
             if (generatedStrings.indexOf(new DeterminedString(selectedString, false)) == -1) {
                 UserIO.INSTANCE.printToConsole("That was an invalid string. Try typing in one of the generated strings below.\n\n");
@@ -131,7 +131,7 @@ public class GuessingGameMode extends GameMode {
                 UserIO.INSTANCE.printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
             } finally {
                 UserIO.INSTANCE.printToConsole("Is that all??? If you do still wish to make any more changes, type \"continue\".\n");
-                response = UserIO.INSTANCE.scanner.next();
+                response = UserIO.INSTANCE.scanner.nextLine();
                 UserIO.INSTANCE.printToConsole("\n");
             }
             
@@ -152,14 +152,14 @@ public class GuessingGameMode extends GameMode {
     private static void generateAndAddStrings(List<DeterminedString> generatedStrings, List<String> addedStrings) {
         Random rng = new Random();
         UserIO.INSTANCE.printToConsole("How large do you should the set of strings be?\n");
-        int setSize = UserIO.INSTANCE.scanner.nextInt();
+        int setSize = Integer.parseInt(UserIO.INSTANCE.scanner.nextLine());
         UserIO.INSTANCE.printToConsole("\n");
 
         for (int i = 0; i < setSize; i++) {
             // The Idea is not type in a number greater than 20.
             // Type in a string that is not longer than 20 English letters.
             UserIO.INSTANCE.printToConsole("Pick a number between 1 and 20.\n");
-            int len = UserIO.INSTANCE.scanner.nextInt();
+            int len = Integer.parseInt(UserIO.INSTANCE.scanner.nextLine());
             String generatedString = rsg.generateString(len);
             UserIO.INSTANCE.printToConsole("\n");
             DeterminedString ds = new DeterminedString(generatedString, false);
@@ -185,7 +185,7 @@ public class GuessingGameMode extends GameMode {
     // EFFECTS: 
     private static void promptforChangeStatus(String selectedString, boolean newStatus, List<String> changedStrings) {
         UserIO.INSTANCE.printToConsole("Would you like to change the status of the string " + selectedString + " to " + (newStatus ? "" : "not ") + "be a word?\n");
-        String prompt = UserIO.INSTANCE.scanner.next();
+        String prompt = UserIO.INSTANCE.scanner.nextLine();
         UserIO.INSTANCE.printToConsole("\n");
 
         if ((prompt.toLowerCase().charAt(0) == 'y')) {

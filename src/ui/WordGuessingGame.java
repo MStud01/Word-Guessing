@@ -33,8 +33,6 @@ public class WordGuessingGame {
     private static GameModes currGameMode;
 
     public WordGuessingGame() {
-        // TODO: Change the delimiter if necessary
-        // UserIO.INSTANCE.scanner.useDelimiter("");
         // loadDSL(dsl);
         UserSettings.initializeSettings();
         start();
@@ -75,8 +73,9 @@ public class WordGuessingGame {
         String input = "message";
 
         while (!input.equalsIgnoreCase("quit")) {
+            UserIO.INSTANCE.printToConsole("Type \"quit\" here, if you do not wish to play the game.\n");
             UserIO.INSTANCE.printToConsole("What game mode do you wish to play?\n");
-            input = UserIO.INSTANCE.scanner.next();
+            input = UserIO.INSTANCE.scanner.nextLine();
             UserIO.INSTANCE.printToConsole("\n");
 
             if (input.matches("^[1-"+ Integer.toString(gameModeCount) +"]$")) {
@@ -85,8 +84,11 @@ public class WordGuessingGame {
                 currGameMode.getGameModeBooter().run();
             } else {
                 for (GameModes gm : GameModes.values()) {
-                    // TODO: Fix the error when the entire game mode title is entered by the user 
-                    if (input.equalsIgnoreCase(gm.getTitle().substring(0, gm.getTitle().indexOf(" ")))) {
+                    // TODO: Consider changing the game mode names to ones excluding the -ing suffixes
+                    // Or comment the commented if condition below
+                    String expectedInputString = gm.getTitle().indexOf("ing") == -1 ? gm.getTitle().substring(0, gm.getTitle().indexOf(" ")) : gm.getTitle().substring(0, gm.getTitle().indexOf("ing"));
+                    if ((input.equalsIgnoreCase(expectedInputString)) || (input.equalsIgnoreCase(gm.getTitle()))) {
+                    // if ((input.equalsIgnoreCase(gm.getTitle().substring(0, gm.getTitle().indexOf(" ")))) || (input.equalsIgnoreCase(gm.getTitle()))) {
                         UserIO.INSTANCE.printToConsole("You have chosen the " + gm.getTitle() + ".\n");
                         currGameMode = gm;
                         currGameMode.getGameModeBooter().run();
