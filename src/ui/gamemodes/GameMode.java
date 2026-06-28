@@ -6,8 +6,8 @@ package ui.gamemodes;
 
 // TODO: Abstract out some methods into model so not everything is in ui
 
-// TODO: Fix the inheritance for this class
-// TODO: FIx the visibility anad the compilation-time of the methods
+// TODO: Fix the inheritance for this class and static-ity of all inherited methods in subclasses
+// TODO: FIx the visibility and the compilation-time of the methods
 public abstract class GameMode {
     protected static int gameModeNum;
     protected static String gameModeTitle;

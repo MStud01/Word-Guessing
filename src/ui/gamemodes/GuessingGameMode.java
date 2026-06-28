@@ -24,7 +24,8 @@ public class GuessingGameMode extends GameMode {
     private static List<DeterminedString> generatedStrings = new ArrayList<DeterminedString>();
     private static List<String> addedStrings = new ArrayList<String>(), changedStrings = new ArrayList<String>();
 
-    // TODO: Implement a constructor or utlize static methods instead
+    // TODO: Implement a constructor with no args and only make the above fields static while 
+    // keeping everything below this non-static (if not needed) and fix inherited methods once done
 
     // TODO: Refactor the following function so that it is more readable and makes calls to multiple functions for readability
     // This function initiates the "Guessing Mode" game mode, initializes the appropriate local

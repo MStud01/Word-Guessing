@@ -27,7 +27,7 @@ public class WordGameApp {
      * structures as it is capable of recursively find subclasses of a class.
      */
 
-    private static GameModes currGameMode;
+    private static GameModes currGameMode;    // TODO: Change this to be of type GameMode
 
     public WordGameApp() {
         // loadDSL(dsl);
@@ -86,6 +86,8 @@ public class WordGameApp {
                     String expectedInputString = gm.getTitle().indexOf("ing") == -1 ? gm.getTitle().substring(0, gm.getTitle().indexOf(" ")) : gm.getTitle().substring(0, gm.getTitle().indexOf("ing"));
                     if ((input.equalsIgnoreCase(expectedInputString)) || (input.equalsIgnoreCase(gm.getTitle()))) {
                     // if ((input.equalsIgnoreCase(gm.getTitle().substring(0, gm.getTitle().indexOf(" ")))) || (input.equalsIgnoreCase(gm.getTitle()))) {
+                        // TODO: Initialize the appropriate constructor here by getting the appropriate field from GameModes
+                        // and call the GameModeBoot() method                    
                         UserIO.INSTANCE.printToTerminal("You have chosen the " + gm.getTitle() + ".\n");
                         currGameMode = gm;
                         currGameMode.getGameModeBooter().run();
