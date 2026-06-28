@@ -1,11 +1,13 @@
 package ui.gamemodes;
 
-// TODO: Complete specifications
-// TODO: Implement methods for this class
+/** In this game mode, the user can add strings with a confirmed word status into the DSL
+    TODO: Implement a fun way to play this game mode
+*/ 
+// TODO: Implement the inherited methods for this class
 public class AddingGameMode extends GameMode {
     static int gameModeNum = 3;
     static String gameModeTitle = "Adding Mode";
-    static String gameMenuIntroMsg = "Add new words to the in-game library of strings that verifies whether a string is a word or not.";
+    static String gameMenuIntroMsg = "Add new strings to the in-game library of strings that verifies whether a string is a word or not.";
 
     
     // TODO: Complete the specifications for this function
