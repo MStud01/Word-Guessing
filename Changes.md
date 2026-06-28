@@ -26,24 +26,38 @@ Additionally, this could work well with another project that utilizes IPA phonet
 ### 28th June 2026 11:30 PM GMT +3
 In this commit, I made the changes necessary in the GuessingGameMode class to make explicit the dependency relationship of the WordGameApp class on the concrete class extending the abstract GameMode class. This is one of a couple commits I will be making to resolve this issue.
 - Changed the static-ity of fields rsg, dsl, generatedStrings, addedStrings and changedStrings to non-static in GuessingGameMode class
-    These fields had no reason to be static.
+    - These fields had no reason to be static.
 - Changed the static-ity of all methods in GuessingGameMode class
-    The methods should not have been static in the first place since I only needed to pass in the property of being able to call the bootGameMode() method of any class extending the GameMode class, which can be done by passing the constructor of the corresponding class instead. 
+    - The methods should not have been static in the first place since I only needed to pass in the property of being able to call the bootGameMode() method of any class extending the GameMode class, which can be done by passing the constructor of the corresponding class instead. 
 - Implemented a constructor for GuessingGameMode class
-    Now, I can pass into the GameModes enum that the WordGameApp class can access to run the bootGameMode() method.
+    - Now, I can pass into the GameModes enum that the WordGameApp class can access to run the bootGameMode() method.
 - Removed redundant code and unnecessary commented TODOs in GuessingGameMode class
-    These lines and comments existed since I needed a fix the persistance of some of the fields that were static prior to this commit.
+    - These lines and comments existed since I needed a fix the persistance of some of the fields that were static prior to this commit.
 - Removed TODOs detailing the need for the above changes in the GuessingGameMode class
 - Added TODOs for fixing the inherited methods in GuessingGameMode class
-    The inherited methods in GuessingGameMode class were given different names and their following methods in the abstract superclass (GameMode class) were not made abstract.
+    - The inherited methods in GuessingGameMode class were given different names and their following methods in the abstract superclass (GameMode class) were not made abstract.
 - Changed the visibility of the bootGameMode() method in GuessingGameMode class to public
-    This was done so the WordGameApp class could call the method.
+    - This was done so the WordGameApp class could call the method.
 
 
-### Next commit : Date Time
+### 29th June 2026 12:00 AM GMT +3
+In this commit, I make the next batch of changes to allow the WordGameApp to properly construct the concrete subclass of GameMode in the GameModes enum. The rest of these changes will follow in the next commit.
+
+I also made changes to the GameMode class (and its other concrete subclasses) to match the visibility and static-ity changes I made to the bootGameMode() method in GuessingGameMode class.
 - Changed the passing of bootGameMode() to the passing of the corresponding constructor in GameModes enum
-    This is to make explicit the dependency that the WordGameApp class has on classes that extend the GameMode class. In the previous implementation, this was obscured unintentionally when I realized I could just pass the bootGameMode() method. Additionally, I was only focused on utilizing a piece of knowledge that I was not very familiar with as I had not been able to utilize this knowledge elsewhere in the past year.
-- Changed the static-ity of the bootGameMode() method in GameMode class
-    So the compiler does not complain.
-- Changed the visibility of the bootGameMode() method in GameMode class to public
-    I made this change once I realized I would not be able to call the method in WordGameApp class.
+    - This is to make explicit the dependency that the WordGameApp class has on classes that extend the GameMode class. In the previous implementation, this was obscured unintentionally when I realized I could just pass the bootGameMode() method. Additionally, I was only focused on utilizing a piece of knowledge that I was not very familiar with as I had not been able to utilize this knowledge elsewhere in the past year.
+- Changed the static-ity of the bootGameMode() method in GameMode class and the other concrete subclass that do not have complete implementations
+    - So the compiler does not complain. And I had to push these changes along so I don't forget about it later.
+- Changed the visibility of the bootGameMode() method in GameMode class and the other concrete subclass that do not have complete implementations to public
+    - I made this change once I realized I would not be able to call the method in WordGameApp class. Same reason about the not wanting to push this later.
+- Removed TODOs informing about the botched inheritance of the GameMode class
+    - Yeah, the only concrete class for the GameMode class that has a complete implementation does not have its methods matching the ones that are listed in the GameMode class. So this was pointed out here. Moved this concern to the GuessingGameMode class where that change is more appropriately voiced.
+- Added TODO about fixing about how the "abstract" methods in GameMode class are not abstract
+    - So, I realized I did not make this change when I implemented this class at first. It only makes the compiler be more pissy about not having implemented it in the concrete subclasses, of which are there are a few that do not have complete implementations. And thus, I tacked this onto my TODOs.
+- Fixed the indentation errors in this file.
+    - I am not really familiar with the Markdown syntax.
+
+### Next commit : Date Time 
+
+Made the final batch of changes 
+- Changes in WordGameApp

@@ -19,7 +19,7 @@ public class GroupingGameMode extends GameMode {
     // REQUIRES:
     // MODIFIES:
     // EFFECTS:
-    static void bootGameMode() { }
+    public void bootGameMode() { }
 
     @Override
     protected void printSummary() { }

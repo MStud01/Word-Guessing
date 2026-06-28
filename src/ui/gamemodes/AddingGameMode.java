@@ -16,7 +16,7 @@ public class AddingGameMode extends GameMode {
     // EFFECTS:
     // Implement into the second game mode the feature of being able to change status of any
     // string in the DSL
-    static void bootGameMode() { }
+    public void bootGameMode() { }
 
     protected void printSummary() { }
     

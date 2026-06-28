@@ -7,7 +7,7 @@ public class StreakGameMode extends GameMode {
     static String gameModeTitle= "Streak Mode";
     static String gameMenuIntroMsg = "DEFAULT DESCRIPTOR";
 
-    static void bootGameMode() { }
+    public void bootGameMode() { }
 
     @Override
     protected void printSummary() { }
