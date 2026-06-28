@@ -51,13 +51,13 @@ public class WordGameApp {
     // Boots up the start menu where the user is introduced to the game and the game modes
     // and is prompted in the subsequent function call
     public void start() {
-        UserIO.INSTANCE.printToConsole("Welcome to the Word Game!\n\n\n");
-        UserIO.INSTANCE.printToConsole("You can play " + gameModeCount + " modes in this game:\n\n");
+        UserIO.INSTANCE.printToTerminal("Welcome to the Word Game!\n\n\n");
+        UserIO.INSTANCE.printToTerminal("You can play " + gameModeCount + " modes in this game:\n\n");
         for (int i = 1; i <= gameModeCount; i++) {
             GameModes gm = gameModes[i - 1];
-            UserIO.INSTANCE.printToConsole("Game Mode " + i + ": " + gm.getTitle() + "\n" + gm.getGameMenuIntroMsg() + "\n\n");
+            UserIO.INSTANCE.printToTerminal("Game Mode " + i + ": " + gm.getTitle() + "\n" + gm.getGameMenuIntroMsg() + "\n\n");
         }
-        UserIO.INSTANCE.printToConsole("To play, choose between the above game modes.\n");
+        UserIO.INSTANCE.printToTerminal("To play, choose between the above game modes.\n");
         processInputs();
     }
 
@@ -70,14 +70,14 @@ public class WordGameApp {
         String input = "message";
 
         while (!input.equalsIgnoreCase("quit")) {
-            UserIO.INSTANCE.printToConsole("Type \"quit\" here, if you do not wish to play the game.\n");
-            UserIO.INSTANCE.printToConsole("What game mode do you wish to play?\n");
+            UserIO.INSTANCE.printToTerminal("Type \"quit\" here, if you do not wish to play the game.\n");
+            UserIO.INSTANCE.printToTerminal("What game mode do you wish to play?\n");
             input = UserIO.INSTANCE.scanner.nextLine();
-            UserIO.INSTANCE.printToConsole("\n");
+            UserIO.INSTANCE.printToTerminal("\n");
 
             if (input.matches("^[1-"+ Integer.toString(gameModeCount) +"]$")) {
                 currGameMode = gameModes[Integer.parseInt(input) - 1];
-                UserIO.INSTANCE.printToConsole("You have chosen the " + currGameMode.getTitle() + ".\n");
+                UserIO.INSTANCE.printToTerminal("You have chosen the " + currGameMode.getTitle() + ".\n");
                 currGameMode.getGameModeBooter().run();
             } else {
                 for (GameModes gm : gameModes) {
@@ -86,21 +86,21 @@ public class WordGameApp {
                     String expectedInputString = gm.getTitle().indexOf("ing") == -1 ? gm.getTitle().substring(0, gm.getTitle().indexOf(" ")) : gm.getTitle().substring(0, gm.getTitle().indexOf("ing"));
                     if ((input.equalsIgnoreCase(expectedInputString)) || (input.equalsIgnoreCase(gm.getTitle()))) {
                     // if ((input.equalsIgnoreCase(gm.getTitle().substring(0, gm.getTitle().indexOf(" ")))) || (input.equalsIgnoreCase(gm.getTitle()))) {
-                        UserIO.INSTANCE.printToConsole("You have chosen the " + gm.getTitle() + ".\n");
+                        UserIO.INSTANCE.printToTerminal("You have chosen the " + gm.getTitle() + ".\n");
                         currGameMode = gm;
                         currGameMode.getGameModeBooter().run();
                         break;
                     }
                 }
                 if ((!input.equalsIgnoreCase("quit")) && (currGameMode == null)) {
-                    UserIO.INSTANCE.printToConsole("That is an invalid choice. Please choose between the provided options.\n");
+                    UserIO.INSTANCE.printToTerminal("That is an invalid choice. Please choose between the provided options.\n");
                 }
             }
             currGameMode = null;
         }
 
-        UserIO.INSTANCE.printToConsole("CHOICE: QUIT\n\n");
-        UserIO.INSTANCE.printToConsole("Thank you for playing the Word Guessing Game!\n");
-        UserIO.INSTANCE.printToConsole("Exiting the game now...");
+        UserIO.INSTANCE.printToTerminal("CHOICE: QUIT\n\n");
+        UserIO.INSTANCE.printToTerminal("Thank you for playing the Word Guessing Game!\n");
+        UserIO.INSTANCE.printToTerminal("Exiting the game now...");
     }
 }

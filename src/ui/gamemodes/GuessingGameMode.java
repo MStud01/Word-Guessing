@@ -38,57 +38,57 @@ public class GuessingGameMode extends GameMode {
         
         generateAndAddStrings();
 
-        UserIO.INSTANCE.printToConsole("Here is your set of generated strings:\n");
+        UserIO.INSTANCE.printToTerminal("Here is your set of generated strings:\n");
         int n = generatedStrings.size();
         for (int i = 0; i < n; i++) {
-            UserIO.INSTANCE.printToConsole(String.format("%-3s %-20s",Integer.toString(i + 1) + ".", generatedStrings.get(i).getString()) + ((i % 4 == 3) ? "\n" : " "));
+            UserIO.INSTANCE.printToTerminal(String.format("%-3s %-20s",Integer.toString(i + 1) + ".", generatedStrings.get(i).getString()) + ((i % 4 == 3) ? "\n" : " "));
         }
 
-        UserIO.INSTANCE.printToConsole("\n\nNow, you can guess whether each string is a word or not.\n");
+        UserIO.INSTANCE.printToTerminal("\n\nNow, you can guess whether each string is a word or not.\n");
 
         boolean changeFlag = false;
         while (n > 0) {
-            UserIO.INSTANCE.printToConsole("Choose a string from the generated strings above and type it in to guess.\n");
-            UserIO.INSTANCE.printToConsole("Or you can type \"skip\" if you think the remainder of the strings cannot possibly be English words.\n");
+            UserIO.INSTANCE.printToTerminal("Choose a string from the generated strings above and type it in to guess.\n");
+            UserIO.INSTANCE.printToTerminal("Or you can type \"skip\" if you think the remainder of the strings cannot possibly be English words.\n");
             String response = UserIO.INSTANCE.scanner.nextLine();
-            UserIO.INSTANCE.printToConsole("\n");
+            UserIO.INSTANCE.printToTerminal("\n");
             if (response.equalsIgnoreCase("skip")) {
                 break;
             }
             String selectedString = response;
             int DSindex = generatedStrings.indexOf(new DeterminedString(selectedString, false)); 
             if (DSindex == -1) {
-                UserIO.INSTANCE.printToConsole("That was not one of the randomly generated strings. Try typing it again.\n");
+                UserIO.INSTANCE.printToTerminal("That was not one of the randomly generated strings. Try typing it again.\n");
                 continue;
             }
-            UserIO.INSTANCE.printToConsole("Do you think this string is a word? Type \"Yes\" if you do think so. Else type \"No\".\n");
+            UserIO.INSTANCE.printToTerminal("Do you think this string is a word? Type \"Yes\" if you do think so. Else type \"No\".\n");
             String guess = UserIO.INSTANCE.scanner.nextLine();
-            UserIO.INSTANCE.printToConsole("\n");
+            UserIO.INSTANCE.printToTerminal("\n");
 
             DeterminedString ds = generatedStrings.get(DSindex);
             if ((guess.toLowerCase().charAt(0) == 'y') || (guess.toLowerCase().charAt(0) == 'w')) {
-                UserIO.INSTANCE.printToConsole("You have guessed that the string is a word.\n");
+                UserIO.INSTANCE.printToTerminal("You have guessed that the string is a word.\n");
                 ds.setStatus(true);
             } else if (guess.toLowerCase().charAt(0) == 'n') {
-                UserIO.INSTANCE.printToConsole("You have guessed that the string is not a word.\n");
+                UserIO.INSTANCE.printToTerminal("You have guessed that the string is not a word.\n");
                 ds.setStatus(false);
             } else {
-                UserIO.INSTANCE.printToConsole("That is an invalid choice. Please choose between the provided options.\n");
+                UserIO.INSTANCE.printToTerminal("That is an invalid choice. Please choose between the provided options.\n");
                 continue;
             }
 
             try {
                 if (dsl.getDSstatus(selectedString) == ds.isWord()) {
-                    UserIO.INSTANCE.printToConsole("Your guess was correct!!\n\n");
+                    UserIO.INSTANCE.printToTerminal("Your guess was correct!!\n\n");
                 } else {
-                    UserIO.INSTANCE.printToConsole("Unfortunately, uour guess was incorrect...\n");
-                    UserIO.INSTANCE.printToConsole("The string you guessed was actually " + (ds.isWord() ? "not a word" : "a word") + ".\n\n");
+                    UserIO.INSTANCE.printToTerminal("Unfortunately, uour guess was incorrect...\n");
+                    UserIO.INSTANCE.printToTerminal("The string you guessed was actually " + (ds.isWord() ? "not a word" : "a word") + ".\n\n");
                     int prevCStrings = changedStrings.size();
                     promptforChangeStatus(selectedString, ds.isWord());
                     changeFlag = (changedStrings.size() != prevCStrings);
                 }
             } catch (DeterminedStringNotFoundException dsnfe) {
-                UserIO.INSTANCE.printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
+                UserIO.INSTANCE.printToTerminal("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
                 continue;
             }
             if (changeFlag) {
@@ -102,9 +102,9 @@ public class GuessingGameMode extends GameMode {
         
         printFinalSummary();
         
-        UserIO.INSTANCE.printToConsole("Are you satisfied with the above results?\n");
+        UserIO.INSTANCE.printToTerminal("Are you satisfied with the above results?\n");
         String response = UserIO.INSTANCE.scanner.nextLine();
-        UserIO.INSTANCE.printToConsole("\n");
+        UserIO.INSTANCE.printToTerminal("\n");
 
         while ((response.toLowerCase().charAt(0) == 'n') || (response.toLowerCase().charAt(0) == 'c')) {
             if (changeFlag) {
@@ -113,11 +113,11 @@ public class GuessingGameMode extends GameMode {
                 // printChangesSummary();
                 changeFlag = false;
             }
-            UserIO.INSTANCE.printToConsole("Please type in the string that you wish to change the status of.\n");
+            UserIO.INSTANCE.printToTerminal("Please type in the string that you wish to change the status of.\n");
             String selectedString = UserIO.INSTANCE.scanner.nextLine();
-            UserIO.INSTANCE.printToConsole("\n");
+            UserIO.INSTANCE.printToTerminal("\n");
             if (generatedStrings.indexOf(new DeterminedString(selectedString, false)) == -1) {
-                UserIO.INSTANCE.printToConsole("That was an invalid string. Try typing in one of the generated strings below.\n\n");
+                UserIO.INSTANCE.printToTerminal("That was an invalid string. Try typing in one of the generated strings below.\n\n");
                 printFinalSummary();
                 continue;
             }
@@ -127,16 +127,16 @@ public class GuessingGameMode extends GameMode {
                 promptforChangeStatus(selectedString, !status);
                 changeFlag = (changedStrings.size() != prevCStrings);
             } catch (DeterminedStringNotFoundException dsnfe) {
-                UserIO.INSTANCE.printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
+                UserIO.INSTANCE.printToTerminal("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
             } finally {
-                UserIO.INSTANCE.printToConsole("Is that all??? If you do still wish to make any more changes, type \"continue\".\n");
+                UserIO.INSTANCE.printToTerminal("Is that all??? If you do still wish to make any more changes, type \"continue\".\n");
                 response = UserIO.INSTANCE.scanner.nextLine();
-                UserIO.INSTANCE.printToConsole("\n");
+                UserIO.INSTANCE.printToTerminal("\n");
             }
             
         }
-        UserIO.INSTANCE.printToConsole("That is the end of this round for the Guessing Game Mode.\n\n");
-        UserIO.INSTANCE.printToConsole("END OF ROUND SUMMARY:\n");
+        UserIO.INSTANCE.printToTerminal("That is the end of this round for the Guessing Game Mode.\n\n");
+        UserIO.INSTANCE.printToTerminal("END OF ROUND SUMMARY:\n");
         printFinalSummary();
         generatedStrings.clear();
         addedStrings.clear();
@@ -150,17 +150,17 @@ public class GuessingGameMode extends GameMode {
     // EFFECTS:
     private static void generateAndAddStrings() {
         Random rng = new Random();
-        UserIO.INSTANCE.printToConsole("How large do you should the set of strings be?\n");
+        UserIO.INSTANCE.printToTerminal("How large do you should the set of strings be?\n");
         int setSize = Integer.parseInt(UserIO.INSTANCE.scanner.nextLine());
-        UserIO.INSTANCE.printToConsole("\n");
+        UserIO.INSTANCE.printToTerminal("\n");
 
         for (int i = 0; i < setSize; i++) {
             // The Idea is not type in a number greater than 20.
             // Type in a string that is not longer than 20 English letters.
-            UserIO.INSTANCE.printToConsole("Pick a number between 1 and 20.\n");
+            UserIO.INSTANCE.printToTerminal("Pick a number between 1 and 20.\n");
             int len = Integer.parseInt(UserIO.INSTANCE.scanner.nextLine());
             String generatedString = rsg.generateString(len);
-            UserIO.INSTANCE.printToConsole("\n");
+            UserIO.INSTANCE.printToTerminal("\n");
             DeterminedString ds = new DeterminedString(generatedString, false);
             while (generatedStrings.contains(ds)) {
                 generatedString = rsg.generateString(len);
@@ -172,10 +172,10 @@ public class GuessingGameMode extends GameMode {
             } catch (DeterminedStringNotFoundException dsnfe) {
                 dsl.addDS(generatedString, rng.nextBoolean());
                 addedStrings.add(generatedString);
-                UserIO.INSTANCE.printToConsole("The string " + generatedString + " was not found in the in-game collection, and has now been added to the in-game\ncollection with a randomized status.\n\n");
+                UserIO.INSTANCE.printToTerminal("The string " + generatedString + " was not found in the in-game collection, and has now been added to the in-game\ncollection with a randomized status.\n\n");
             }
         }
-        UserIO.INSTANCE.printToConsole("\n");
+        UserIO.INSTANCE.printToTerminal("\n");
     }
 
     // TODO: Complete the specifications for this function
@@ -183,21 +183,21 @@ public class GuessingGameMode extends GameMode {
     // MODIFIES:
     // EFFECTS: 
     private static void promptforChangeStatus(String selectedString, boolean newStatus) {
-        UserIO.INSTANCE.printToConsole("Would you like to change the status of the string " + selectedString + " to " + (newStatus ? "" : "not ") + "be a word?\n");
+        UserIO.INSTANCE.printToTerminal("Would you like to change the status of the string " + selectedString + " to " + (newStatus ? "" : "not ") + "be a word?\n");
         String prompt = UserIO.INSTANCE.scanner.nextLine();
-        UserIO.INSTANCE.printToConsole("\n");
+        UserIO.INSTANCE.printToTerminal("\n");
 
         if ((prompt.toLowerCase().charAt(0) == 'y')) {
-            UserIO.INSTANCE.printToConsole("You have chosen to change the status of this string.\n");
+            UserIO.INSTANCE.printToTerminal("You have chosen to change the status of this string.\n");
             dsl.getDS(selectedString).setStatus(newStatus);
             changedStrings.add(selectedString);
         } else if (prompt.toLowerCase().charAt(0) == 'n') {
-            UserIO.INSTANCE.printToConsole("You have chosen to not change the status of this string.\n");
+            UserIO.INSTANCE.printToTerminal("You have chosen to not change the status of this string.\n");
         } else {
-            UserIO.INSTANCE.printToConsole("That is an invalid choice. The status of this string will not be changed.\n");
+            UserIO.INSTANCE.printToTerminal("That is an invalid choice. The status of this string will not be changed.\n");
         }
 
-        UserIO.INSTANCE.printToConsole("The status of the string " + selectedString + " can be changed at the end of the game or in the second game mode.\n\n");
+        UserIO.INSTANCE.printToTerminal("The status of the string " + selectedString + " can be changed at the end of the game or in the second game mode.\n\n");
     }
 
     // This function prints a summary of the guesses made by the user as changes are made to 
@@ -206,19 +206,19 @@ public class GuessingGameMode extends GameMode {
     private static void printChangesSummary() {
         for (int i = 0; i < generatedStrings.size(); i++) {
             DeterminedString ds = generatedStrings.get(i);
-            UserIO.INSTANCE.printToConsole((i + 1) + ". " + ds.getString() + "\n");
-            UserIO.INSTANCE.printToConsole("Your Guess - "+ (ds.isWord() ? "A Word" : "Not A Word") +"\n");
+            UserIO.INSTANCE.printToTerminal((i + 1) + ". " + ds.getString() + "\n");
+            UserIO.INSTANCE.printToTerminal("Your Guess - "+ (ds.isWord() ? "A Word" : "Not A Word") +"\n");
             if (addedStrings.contains(ds.getString())) {
-                UserIO.INSTANCE.printToConsole("This string was recently added into the in-game library in this round.\n");
+                UserIO.INSTANCE.printToTerminal("This string was recently added into the in-game library in this round.\n");
             }
             if (changedStrings.contains(ds.getString())) {
                 try {
-                    UserIO.INSTANCE.printToConsole("The status of the string was changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") +"\n");
+                    UserIO.INSTANCE.printToTerminal("The status of the string was changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") +"\n");
                 } catch (DeterminedStringNotFoundException dsnfe) {
-                    UserIO.INSTANCE.printToConsole("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN.\n");
+                    UserIO.INSTANCE.printToTerminal("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN.\n");
                 }
             }
-            UserIO.INSTANCE.printToConsole("\n");
+            UserIO.INSTANCE.printToTerminal("\n");
         }
     }
 
@@ -231,16 +231,16 @@ public class GuessingGameMode extends GameMode {
         for (int i = 0; i < n; i++) {
             DeterminedString ds = generatedStrings.get(i);
             try {
-                UserIO.INSTANCE.printToConsole(String.format("%-3s String %-32s   is\t\t%s\n", Integer.toString(i + 1)+".", ds.getString(), (dsl.getDSstatus(ds.getString()) ? "a Word" : "Not a Word")));
-                UserIO.INSTANCE.printToConsole(String.format("    You guessed that %-22s   is\t\t%s\n", ds.getString(),(ds.isWord() ? "a Word" : "Not a Word")));
-                UserIO.INSTANCE.printToConsole("    Recently added in this round?\t\t       "+ (addedStrings.contains(ds.getString()) ? "YES": "NO") +"\n");
-                UserIO.INSTANCE.printToConsole("    Changed status in this round:\t      " + (changedStrings.contains(ds.getString()) ? "Changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") :"Unchanged word status") +"\n\n");
+                UserIO.INSTANCE.printToTerminal(String.format("%-3s String %-32s   is\t\t%s\n", Integer.toString(i + 1)+".", ds.getString(), (dsl.getDSstatus(ds.getString()) ? "a Word" : "Not a Word")));
+                UserIO.INSTANCE.printToTerminal(String.format("    You guessed that %-22s   is\t\t%s\n", ds.getString(),(ds.isWord() ? "a Word" : "Not a Word")));
+                UserIO.INSTANCE.printToTerminal("    Recently added in this round?\t\t       "+ (addedStrings.contains(ds.getString()) ? "YES": "NO") +"\n");
+                UserIO.INSTANCE.printToTerminal("    Changed status in this round:\t      " + (changedStrings.contains(ds.getString()) ? "Changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") :"Unchanged word status") +"\n\n");
                 score += (dsl.getDSstatus(ds.getString()) == ds.isWord() ? 1 : 0);
             } catch (DeterminedStringNotFoundException dsnfe) {
-                UserIO.INSTANCE.printToConsole("\nTHIS SHOULD NOT BE PRINTED LIKE EVER.\n");
+                UserIO.INSTANCE.printToTerminal("\nTHIS SHOULD NOT BE PRINTED LIKE EVER.\n");
             }
         }
-        UserIO.INSTANCE.printToConsole("Your score for this round of Guessing Mode is " + score + " out of " + n +".\n");
+        UserIO.INSTANCE.printToTerminal("Your score for this round of Guessing Mode is " + score + " out of " + n +".\n");
         String performanceMessage = "";
 
         double delta = 0.000001, scoreOutOfTotal = (double) score/(double) n;
@@ -257,6 +257,6 @@ public class GuessingGameMode extends GameMode {
         } else {
             performanceMessage = "..............ehem~... WOW!!!! I am IMPRESSED to say the least. You\ndefied all odds to achieve such an...... *softly* unbelievably low ...  score that I am concerned\nif this is how you decide the actions in your Life.";
         }
-        UserIO.INSTANCE.printToConsole("Your peformance this round was" + performanceMessage + "\n\n");
+        UserIO.INSTANCE.printToTerminal("Your peformance this round was" + performanceMessage + "\n\n");
     }
 }

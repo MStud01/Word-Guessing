@@ -2,14 +2,17 @@ package ui;
 
 import java.util.Scanner;
 
-// TODO: Complete specifications for this class
+// A singleton class that creates an interactive terminal for the user to play the game.
+// Each class in ui accesses the singleton instance to print outputs and accept user inputs.
+// Currently, this class only allows text outputs and will output images in future versions.
 public enum UserIO {
     INSTANCE; // singleton enum instance so all package classes can access its attr and methods
 
     public Scanner scanner = new Scanner(System.in);
 
-    // TODO: Might need to change the method name to printToTerminal
-    public void printToConsole(String message) {
+    // A custom print method that utilizes Thread manipulation to print the given string 
+    // character by character with a slight delay between each character being printed.
+    public void printToTerminal(String message) {
         for (char c: message.toCharArray()) {
             System.out.print(c);
             try {
