@@ -14,9 +14,10 @@ public abstract class GameMode {
     public abstract void bootGameMode();
 
     // TODO: Make the following methods abstract
-    protected void printSummary() { }
     
     protected void printSummaryRoundInProgress() { }
+    
+    protected void printSummary() { }
 
     protected void printSummaryDebug() { }
 }

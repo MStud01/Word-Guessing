@@ -94,6 +94,7 @@ public class GuessingGameMode extends GameMode {
                     UserIO.INSTANCE.printToTerminal("Unfortunately, uour guess was incorrect...\n");
                     UserIO.INSTANCE.printToTerminal("The string you guessed was actually " + (ds.isWord() ? "not a word" : "a word") + ".\n\n");
                     int prevCStrings = changedStrings.size();
+                    // TODO: Look into the need for this function as pointed out in the TODO before the end of round changes
                     promptforChangeStatus(selectedString, ds.isWord());
                     changeFlag = (changedStrings.size() != prevCStrings);
                 }
@@ -103,14 +104,20 @@ public class GuessingGameMode extends GameMode {
             }
             if (changeFlag) {
                 if (n != 1) {
-                    printChangesSummary();
+                    printSummaryRoundInProgress();
                 }
                 changeFlag = false;
             }
             n--;
         }
-        
-        printFinalSummary();
+        // TODO: Make it clear that from here on, the user is done guessing and will be able to 
+        // make changes to the DSL if they wish to 
+        // Looking further into it, I don't know if the user NEEDS to be allowed to be able to make
+        // this change. Also, I got a fun idea of just ending it here unless the user types in a 
+        // secret message that they can figure out by playing the adding mode, somthing along the 
+        // lines of cheating since what happens from here on is just cheats being turned on for the user
+        // Realistically, the following section is only there for debug reasons. 
+        printSummary();
         
         UserIO.INSTANCE.printToTerminal("Are you satisfied with the above results?\n");
         String response = UserIO.INSTANCE.scanner.nextLine();
@@ -118,9 +125,7 @@ public class GuessingGameMode extends GameMode {
 
         while ((response.toLowerCase().charAt(0) == 'n') || (response.toLowerCase().charAt(0) == 'c')) {
             if (changeFlag) {
-                printFinalSummary();
-                // OR
-                // printChangesSummary();
+                printSummary();
                 changeFlag = false;
             }
             UserIO.INSTANCE.printToTerminal("Please type in the string that you wish to change the status of.\n");
@@ -128,7 +133,7 @@ public class GuessingGameMode extends GameMode {
             UserIO.INSTANCE.printToTerminal("\n");
             if (generatedStrings.indexOf(new DeterminedString(selectedString, false)) == -1) {
                 UserIO.INSTANCE.printToTerminal("That was an invalid string. Try typing in one of the generated strings below.\n\n");
-                printFinalSummary();
+                printSummary();
                 continue;
             }
             try {
@@ -147,7 +152,7 @@ public class GuessingGameMode extends GameMode {
         }
         UserIO.INSTANCE.printToTerminal("That is the end of this round for the Guessing Game Mode.\n\n");
         UserIO.INSTANCE.printToTerminal("END OF ROUND SUMMARY:\n");
-        printFinalSummary();
+        printSummary();
     }
 
     // TODO: Complete the specifications for this function
@@ -161,12 +166,14 @@ public class GuessingGameMode extends GameMode {
         UserIO.INSTANCE.printToTerminal("\n");
 
         for (int i = 0; i < setSize; i++) {
-            // The Idea is not type in a number greater than 20.
+            // The Idea is not to type in a number greater than 20 since it breaks formatting when printing
             // Type in a string that is not longer than 20 English letters.
             UserIO.INSTANCE.printToTerminal("Pick a number between 1 and 20.\n");
             int len = Integer.parseInt(UserIO.INSTANCE.scanner.nextLine());
-            String generatedString = rsg.generateString(len);
             UserIO.INSTANCE.printToTerminal("\n");
+            String generatedString = rsg.generateString(len);
+            // TODO: Possibly abstract out below code to DSL OR RSG??
+            // Might prove testing to be difficult if I do so
             DeterminedString ds = new DeterminedString(generatedString, false);
             while (generatedStrings.contains(ds)) {
                 generatedString = rsg.generateString(len);
@@ -206,10 +213,11 @@ public class GuessingGameMode extends GameMode {
         UserIO.INSTANCE.printToTerminal("The status of the string " + selectedString + " can be changed at the end of the game or in the second game mode.\n\n");
     }
 
+    @Override
     // This function prints a summary of the guesses made by the user as changes are made to 
     // the DSL (the in-game library), particularly relating to the strings generated this 
     // round, whether if one of them was recently added or had their word status changed.
-    private void printChangesSummary() {
+    protected void printSummaryRoundInProgress() {
         for (int i = 0; i < generatedStrings.size(); i++) {
             DeterminedString ds = generatedStrings.get(i);
             UserIO.INSTANCE.printToTerminal((i + 1) + ". " + ds.getString() + "\n");
@@ -228,11 +236,12 @@ public class GuessingGameMode extends GameMode {
         }
     }
 
+    @Override
     // This function prints the final summary after all the guessed are made as well as at
     // the end of the round. The function informs the user on their guesses and their total 
     // score. It also displays whether the string existed in the DSL at the start of the 
     // round and if its word status recorded in the DSL was changed in this round.
-    private void printFinalSummary() {
+    protected void printSummary() {
         int score = 0, n = generatedStrings.size();
         for (int i = 0; i < n; i++) {
             DeterminedString ds = generatedStrings.get(i);
@@ -248,7 +257,7 @@ public class GuessingGameMode extends GameMode {
         }
         UserIO.INSTANCE.printToTerminal("Your score for this round of Guessing Mode is " + score + " out of " + n +".\n");
         String performanceMessage = "";
-
+        // TODO: Refactor the below block out to make this function more cohesive
         double delta = 0.000001, scoreOutOfTotal = (double) score/(double) n;
         if (((scoreOutOfTotal - 0.90) >= delta) || (Math.abs(scoreOutOfTotal - 0.90) <= delta)) {
             performanceMessage = " SUPEEEEEEEEEERRRRRRRRRB!!!!! Really Great Job For Reaching The Peak.";
@@ -264,5 +273,12 @@ public class GuessingGameMode extends GameMode {
             performanceMessage = "..............ehem~... WOW!!!! I am IMPRESSED to say the least. You\ndefied all odds to achieve such an...... *softly* unbelievably low ...  score that I am concerned\nif this is how you decide the actions in your Life.";
         }
         UserIO.INSTANCE.printToTerminal("Your peformance this round was" + performanceMessage + "\n\n");
+    }
+
+    @Override
+    // TODO: Complete specifications for this method
+    protected void printSummaryDebug() {
+        // TODO: Figure out whether DebugSummary will be differnt from EndOfRoundSummary
+        printSummary();
     }
 }

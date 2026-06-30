@@ -74,5 +74,32 @@ Made the final batch of changes to allow the WordGameApp class to construct the 
 - Added a TODO for the above change I made to the static-ity of the currGameMode field in WordGameApp class.
     - I am still a bit doubtful whether it DOES indeed NEED to be static. So, added this on in case something goes wrong in the future.
 
+### 30th June 2026 05:36 PM GMT +3
+So, I made the changes to fix the inheritance relationship between the abstract GameMode class and the concrete GuessingGameMode class. And Added a lot to consider for making the GuessingGameMode class more cohesive and the game a bit more fun.
+
+- Swapped around the printSummary() method and printSummaryRoundInProgress() method in GameMode class
+    - Makes more sense when printSummary() is run usually at the end of the round and should be after printSummaryRoundInProgress() method in the class file.
+- Changed the names of printChangesSummary() method to printSummaryRoundInProgress() and printFinalSummary() method to printSummary() in GuessingGameMode class
+    - Fixing the inheritance relationship between the abstract GameMode class and its concrete classes. So the names of the methods had to match
+- Changed the visibility of printSummaryRoundInProgress() and printSummary() methods from private to protected in GuessingGameMode class.
+    - The compiler complains a lot about not narrowing the visibility of the inherited methods regardless of whether the method is abstract or not in the superclass.
+- Added a new method called printSummaryDebug() method in GuessingGameMode class
+    - This is supposed to be inherited from the GameMode abstract class and so I am adding it here as well since it is useful for debugging purposes. Currently, it just calls printSummary().
+- Added Override annotations for the inherited methods in GuessingGameMode class
+- Switched around the print to Terminal at lines 173 and 174 to make it consistent with the rest of the prints with a similar pattern in GuessingGameMode class.
+- Added a TODO of ending the round at an earlier point when all te guessing is done in GuessingGameMode class (lines 97 and 113).
+    - I plan to add some secrets about the game that would allow the user to have cheats on. There is already a secret fast mode I added for setting game speed. Just need to leave breadcrumbs to get there.
+    - Also need to consider if promptForChangeStatus() method would be needed if the above suggestion is implemened. 
+- Added a TODO to look into figuring out a different implementation for printSummaryDebug() method in GuessingGameMode class
+- Added a couple TODOs (at lines 175 and 260) to refactor/abstract out methods of cohesion in GuessingGameMode class
+- Fixed a typo on a comment in GuessingGameMode class (line 169)
+- Removed a comment that implied calling printSummaryRoundInProgress() instead of printSummary() in GuessingGameMode class (line 128)
+    
+
 ### Next commit : DATE TIME
 - Changes in RSG and README
+
+
+General template
+### Next commit : DATE TIME
+- Changes in ???
