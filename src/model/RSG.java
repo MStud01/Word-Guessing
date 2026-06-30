@@ -2,6 +2,7 @@ package model;
 
 import java.util.Random;
 
+// TODO: COnsider not making this a singleton class as there doesn't seem to be a reason to need this to be one 
 // A singleton class representing a random string generator that
 // creates strings from randomly generated chars
 public class RSG {

@@ -95,9 +95,10 @@ So, I made the changes to fix the inheritance relationship between the abstract 
 - Fixed a typo on a comment in GuessingGameMode class (line 169)
 - Removed a comment that implied calling printSummaryRoundInProgress() instead of printSummary() in GuessingGameMode class (line 128)
     
-
-### Next commit : DATE TIME
-- Changes in RSG and README
+### 30th June 2026 05:39 PM GMT +3
+- Added a TODO to RSG class considering whether the RSG class needs to be a singleton class
+- Added a TODO to README.md doc
+    - I made quite a few changes to the model and have implemented a working but not complete ui since the last time I updated it. 
 
 
 General template
