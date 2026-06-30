@@ -57,7 +57,22 @@ I also made changes to the GameMode class (and its other concrete subclasses) to
 - Fixed the indentation errors in this file.
     - I am not really familiar with the Markdown syntax.
 
-### Next commit : Date Time 
+### 30th June 2026 05:08 PM GMT +3 
 
-Made the final batch of changes 
-- Changes in WordGameApp
+Made the final batch of changes to allow the WordGameApp class to construct the GameMode, making clear the dependency relationship of this class on any concrete classes extending GameMode class.
+- Changed the type of the currGameMode field from the GameModes enum type to the GameMode class type in the WordGameApp class.
+    - Made this change to store the newly intialized GameMode concrete type, which varies depending on user input. So now it matches the type of class utilized to call bootGameMode() method.
+- Introduced a local variable called gm of type GameMOdes enum in WordGameApp class (line 79)
+    - So there doesn't need to be multiple accessing of the GameModes enum when the if block is true and it matches the local variable created in the else block.
+- Changed which value currGameMode field gets at runtime in WordGameApp class (lines 81 to 82 and 92 to 93)
+    - So now a newly initialized GameMode concrete object is utilized instead of a Runnable object that was passed into the GameModes enum. Regardless, the bootGameMode() method is still called.
+- Changed the local variable that is used to print to terminal in WordGameApp class (line 80)
+    - Previously, it used the GameModes enum field currGameMode. Now, it utilizes the GameModes enum local variable gm which is declared and initialized in the if block.
+- Changed the static-ity of the currGameMode field to non-static in the WordGameApp class.
+    - I don't really have a clue why I needed this to be static so I changed it back since it makes sense that it changes during runtime and it doesn't really need to be accessed.
+- Switched around the lines that were printed to the console (lines 73 and 74) so it better fits the contents of the prints. 
+- Added a TODO for the above change I made to the static-ity of the currGameMode field in WordGameApp class.
+    - I am still a bit doubtful whether it DOES indeed NEED to be static. So, added this on in case something goes wrong in the future.
+
+### Next commit : DATE TIME
+- Changes in RSG and README

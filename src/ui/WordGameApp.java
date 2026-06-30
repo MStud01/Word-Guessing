@@ -1,7 +1,7 @@
 package ui;
 
 import model.DSL;
-
+import ui.gamemodes.GameMode;
 import ui.gamemodes.GameModes;
 
 // TODO: Add a logging system to log user inputs and game outcomes
@@ -27,7 +27,7 @@ public class WordGameApp {
      * structures as it is capable of recursively find subclasses of a class.
      */
 
-    private static GameModes currGameMode;    // TODO: Change this to be of type GameMode
+    private GameMode currGameMode; // TODOL Look into if this needs to be static
 
     public WordGameApp() {
         // loadDSL(dsl);
@@ -70,15 +70,16 @@ public class WordGameApp {
         String input = "message";
 
         while (!input.equalsIgnoreCase("quit")) {
-            UserIO.INSTANCE.printToTerminal("Type \"quit\" here, if you do not wish to play the game.\n");
             UserIO.INSTANCE.printToTerminal("What game mode do you wish to play?\n");
+            UserIO.INSTANCE.printToTerminal("Type \"quit\" here, if you do not wish to play the game.\n");
             input = UserIO.INSTANCE.scanner.nextLine();
             UserIO.INSTANCE.printToTerminal("\n");
 
             if (input.matches("^[1-"+ Integer.toString(gameModeCount) +"]$")) {
-                currGameMode = gameModes[Integer.parseInt(input) - 1];
-                UserIO.INSTANCE.printToTerminal("You have chosen the " + currGameMode.getTitle() + ".\n");
-                currGameMode.getGameModeBooter().run();
+                GameModes gm = gameModes[Integer.parseInt(input) - 1];
+                UserIO.INSTANCE.printToTerminal("You have chosen the " + gm.getTitle() + ".\n");
+                currGameMode = gm.getConstructor().get();
+                currGameMode.bootGameMode();
             } else {
                 for (GameModes gm : gameModes) {
                     // TODO: Consider changing the game mode names to ones excluding the -ing suffixes
@@ -89,8 +90,8 @@ public class WordGameApp {
                         // TODO: Initialize the appropriate constructor here by getting the appropriate field from GameModes
                         // and call the GameModeBoot() method                    
                         UserIO.INSTANCE.printToTerminal("You have chosen the " + gm.getTitle() + ".\n");
-                        currGameMode = gm;
-                        currGameMode.getGameModeBooter().run();
+                        currGameMode = gm.getConstructor().get();
+                        currGameMode.bootGameMode();
                         break;
                     }
                 }
