@@ -11,11 +11,22 @@ import model.exceptions.DeterminedStringNotFoundException;
 
 import ui.UserIO;
 
-// TODO: Complete specifications for this class
-// TODO: Implement methods inherited for this class
-//      protected void printSummary() { }
-//      protected void printSummaryRoundInProgress() { }
-//      protected void printSummaryDebug() { }
+// In this game mode, the user can guess whether a randomly generated string of English letters is a
+// word or not. 
+// The user is presented a set of randomly generated strings where the size of the set and the length
+// of each string is based on user inputs. The user is then asked to choose a string from the set and
+// guess its word status. Depending on the correctness of the user's guess, they could be prompted to
+// change the word status of the string in the DSL (in-game library). 
+// The user can also choose to pass their chances of guessing each string in the set if they find that
+// the remaining unguessed strings in the set are not words. 
+// At the end of the round, the user is presented with a summary of their performance in the round,
+// including their guesses, the actual word status of each of the generated strings in the set, and
+// whether each string was recently added to the DSL or had its word status changed in the round.
+// There is also a flavour text provided to the user based on their performance in the round. 
+// TODO: Implement the below functionallty.
+// The user can also enable cheats during/after the rounds of guessing that allows them to change the
+// status of any of the generated strings in the DSL by typing a secret message found in one of the 
+// other game modes or throughout this round.
 
 public class GuessingGameMode extends GameMode {
     static final int gameModeNum = 1;
@@ -36,7 +47,6 @@ public class GuessingGameMode extends GameMode {
     }
 
     @Override
-    // TODO: Refactor the following function so that it is more readable and makes calls to multiple functions for readability
     // This function initiates the "Guessing Mode" game mode, initializes the appropriate local
     // variables to hold generated strings and user guesses and prompts the user to make guesses
     // on the word status of the randomly generated strings displayed to them.
@@ -94,7 +104,7 @@ public class GuessingGameMode extends GameMode {
                     UserIO.INSTANCE.printToTerminal("Unfortunately, uour guess was incorrect...\n");
                     UserIO.INSTANCE.printToTerminal("The string you guessed was actually " + (ds.isWord() ? "not a word" : "a word") + ".\n\n");
                     int prevCStrings = changedStrings.size();
-                    // TODO: Look into the need for this function as pointed out in the TODO before the end of round changes
+                    // TODO: Look into the need for this function as pointed out in the comment before the end of round changes
                     promptforChangeStatus(selectedString, ds.isWord());
                     changeFlag = (changedStrings.size() != prevCStrings);
                 }
@@ -148,17 +158,21 @@ public class GuessingGameMode extends GameMode {
                 response = UserIO.INSTANCE.scanner.nextLine();
                 UserIO.INSTANCE.printToTerminal("\n");
             }
-            
         }
         UserIO.INSTANCE.printToTerminal("That is the end of this round for the Guessing Game Mode.\n\n");
         UserIO.INSTANCE.printToTerminal("END OF ROUND SUMMARY:\n");
         printSummary();
     }
 
-    // TODO: Complete the specifications for this function
-    // REQUIRES:
-    // MODIFIES:
-    // EFFECTS:
+    // A helper method that generates random strings of characters resembling English words, where the
+    // length and number of strings to be generated is defined by the user. The randomly generated 
+    // strings are then indivdually handled depending on each of the following obscure cases:
+    //              the string generated is already contained in the list of generated strings
+    //              or in the case where the generated string is not found in the DSL
+    // and then individually added to the the generatedStrings field.
+    // REQUIRES: dsl.getDS(selectedString) != null
+    // MODIFIES: generatedStrings, addedStrings, dsl
+    // EFFECTS: Generates a number of random strings of characters and adds it to the generatedStrings
     private void generateAndAddStrings() {
         Random rng = new Random();
         UserIO.INSTANCE.printToTerminal("How large do you should the set of strings be?\n");
@@ -172,8 +186,6 @@ public class GuessingGameMode extends GameMode {
             int len = Integer.parseInt(UserIO.INSTANCE.scanner.nextLine());
             UserIO.INSTANCE.printToTerminal("\n");
             String generatedString = rsg.generateString(len);
-            // TODO: Possibly abstract out below code to DSL OR RSG??
-            // Might prove testing to be difficult if I do so
             DeterminedString ds = new DeterminedString(generatedString, false);
             while (generatedStrings.contains(ds)) {
                 generatedString = rsg.generateString(len);
@@ -191,10 +203,15 @@ public class GuessingGameMode extends GameMode {
         UserIO.INSTANCE.printToTerminal("\n");
     }
 
-    // TODO: Complete the specifications for this function
-    // REQUIRES:
-    // MODIFIES:
-    // EFFECTS: 
+    // A helper method that changes the status of a determined string in the DSL depending on the user's input
+    // The user is asked whether they would like to change the status of the given string to a 
+    // particular word status determined by the given boolean. The user is then informed of the 
+    // result of their choice and are informed that they are able to make this change at a later time.
+    // The method adds the given selectedString to the list of changedStrings if the user proceeds
+    // to change the status of the determined string matching the given string.
+    // REQUIRES: dsl.getDS(selectedString) != null
+    // MODIFIES: changedStrings,  dsl (more specifically dsl.getDS(selectedString))
+    // EFFECTS: Changes the status of a determined string in the DSL depending on the user's input
     private void promptforChangeStatus(String selectedString, boolean newStatus) {
         UserIO.INSTANCE.printToTerminal("Would you like to change the status of the string " + selectedString + " to " + (newStatus ? "" : "not ") + "be a word?\n");
         String prompt = UserIO.INSTANCE.scanner.nextLine();
@@ -256,8 +273,18 @@ public class GuessingGameMode extends GameMode {
             }
         }
         UserIO.INSTANCE.printToTerminal("Your score for this round of Guessing Mode is " + score + " out of " + n +".\n");
-        String performanceMessage = "";
-        // TODO: Refactor the below block out to make this function more cohesive
+        String performanceMessage = getPerformanceMessage(score, n);
+        UserIO.INSTANCE.printToTerminal("Your peformance this round was" + performanceMessage + "\n\n");
+    }
+
+    // A helper method that returns a message stating the user's performance for the round using a 
+    // custom defined grading scale with the given ints. 
+    // Alternatively, a method to return an enum value for letter grades could be implemented for 
+    // this method if the enum proves to be reusable in other places.
+    private String getPerformanceMessage(int score, int n) {
+        // TODO: Look into if returning a locally defined variable is the right thing to do
+        // Also try a better name for the method next time.
+        String performanceMessage;
         double delta = 0.000001, scoreOutOfTotal = (double) score/(double) n;
         if (((scoreOutOfTotal - 0.90) >= delta) || (Math.abs(scoreOutOfTotal - 0.90) <= delta)) {
             performanceMessage = " SUPEEEEEEEEEERRRRRRRRRB!!!!! Really Great Job For Reaching The Peak.";
@@ -272,11 +299,12 @@ public class GuessingGameMode extends GameMode {
         } else {
             performanceMessage = "..............ehem~... WOW!!!! I am IMPRESSED to say the least. You\ndefied all odds to achieve such an...... *softly* unbelievably low ...  score that I am concerned\nif this is how you decide the actions in your Life.";
         }
-        UserIO.INSTANCE.printToTerminal("Your peformance this round was" + performanceMessage + "\n\n");
+        return performanceMessage;
     }
 
     @Override
-    // TODO: Complete specifications for this method
+    // This method prints the summary for debugging. Currently, the method just calls printSummary()
+    // as that implementation seems detailed enough. Though, it does need to be looked into.
     protected void printSummaryDebug() {
         // TODO: Figure out whether DebugSummary will be differnt from EndOfRoundSummary
         printSummary();

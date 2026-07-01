@@ -100,6 +100,23 @@ So, I made the changes to fix the inheritance relationship between the abstract 
 - Added a TODO to README.md doc
     - I made quite a few changes to the model and have implemented a working but not complete ui since the last time I updated it. 
 
+### 1st July 2026 11:00 PM GMT +3
+
+- Added a helper method called getPerformanceMessage() in GuessingGameMode class
+    - This method as added to make the printSummary() method more cohesive since it did not seem to follow the single responsibility, single method rule.
+- Wrote specifications for the GuessingGameMode class
+    - This explains what the user can do in this game mode as well as what information the user will
+    be privy to throughout a round of this game mode.
+- Wrote specifications for generateAndAddStrings(), promptforChangeStatus() and getPerformanceMessage() helper methods and printSummaryDebug() inherited method in GuessingGameMode class
+    - The helper methods now explain their particular effects and some of these specifications also explain the pre-conditions for some of the methods that are required to be met prior to them being called.
+    - The inherited method does not do much other than just call printSummary() so it does not really have a detailed specification as compared to the specifications for the other methods. I have already added it to my TODO list to figure out an implementation for this method that makes it unique.
+- Removed a TODO regarding the refactoring of bootGameMode() method in GuessingGameMode class
+    - I will remember it when I learn something new that I can use to refactor that method since it's commom for me to look for ways to apply a newly acquired skill.
+- Added a TODO explaiing my concerns of returning a locally defined variable from within a helper method
+    - This was added just recently along with the new helper method getPerformanceMessage() whose name also does not seem that special. 
+- Added a TODO to implement a cheats mode for the user to chnage the status of any of the generated strings in GuessingGameMode class
+    - Made quite a few alternative ideas regardingo how the cheats mode could be accessed by the user. This would be more appropriate since it does not make sense for the user to just be able to change the status of the strings in the in-game library. 
+- Changed the wording of a TODO in GuessingGameMode class (line 108)
 
 General template
 ### Next commit : DATE TIME
