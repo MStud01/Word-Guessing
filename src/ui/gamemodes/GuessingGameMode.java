@@ -11,6 +11,7 @@ import model.exceptions.DeterminedStringNotFoundException;
 
 import ui.UserIO;
 
+// TODO: Update specifications
 // In this game mode, the user can guess whether a randomly generated string of English letters is a
 // word or not. 
 // The user is presented a set of randomly generated strings where the size of the set and the length
@@ -23,7 +24,6 @@ import ui.UserIO;
 // including their guesses, the actual word status of each of the generated strings in the set, and
 // whether each string was recently added to the DSL or had its word status changed in the round.
 // There is also a flavour text provided to the user based on their performance in the round. 
-// TODO: Implement the below functionallty.
 // The user can also enable cheats during/after the rounds of guessing that allows them to change the
 // status of any of the generated strings in the DSL by typing a secret message found in one of the 
 // other game modes or throughout this round.
@@ -47,6 +47,7 @@ public class GuessingGameMode extends GameMode {
     }
 
     @Override
+    // TODO: Update specifications
     // This function initiates the "Guessing Mode" game mode, initializes the appropriate local
     // variables to hold generated strings and user guesses and prompts the user to make guesses
     // on the word status of the randomly generated strings displayed to them.
@@ -66,7 +67,6 @@ public class GuessingGameMode extends GameMode {
 
         UserIO.INSTANCE.printToTerminal("\n\nNow, you can guess whether each string is a word or not.\n");
 
-        boolean changeFlag = false;
         while (n > 0) {
             UserIO.INSTANCE.printToTerminal("Choose a string from the generated strings above and type it in to guess.\n");
             UserIO.INSTANCE.printToTerminal("Or you can type \"skip\" if you think the remainder of the strings cannot possibly be English words.\n");
@@ -103,62 +103,38 @@ public class GuessingGameMode extends GameMode {
                 } else {
                     UserIO.INSTANCE.printToTerminal("Unfortunately, uour guess was incorrect...\n");
                     UserIO.INSTANCE.printToTerminal("The string you guessed was actually " + (ds.isWord() ? "not a word" : "a word") + ".\n\n");
-                    int prevCStrings = changedStrings.size();
-                    // TODO: Look into the need for this function as pointed out in the comment before the end of round changes
-                    promptforChangeStatus(selectedString, ds.isWord());
-                    changeFlag = (changedStrings.size() != prevCStrings);
                 }
             } catch (DeterminedStringNotFoundException dsnfe) {
                 UserIO.INSTANCE.printToTerminal("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
                 continue;
             }
-            if (changeFlag) {
-                if (n != 1) {
-                    printSummaryRoundInProgress();
-                }
-                changeFlag = false;
-            }
+            printSummaryRoundInProgress();
             n--;
         }
-        // TODO: Make it clear that from here on, the user is done guessing and will be able to 
-        // make changes to the DSL if they wish to 
-        // Looking further into it, I don't know if the user NEEDS to be allowed to be able to make
-        // this change. Also, I got a fun idea of just ending it here unless the user types in a 
-        // secret message that they can figure out by playing the adding mode, somthing along the 
-        // lines of cheating since what happens from here on is just cheats being turned on for the user
-        // Realistically, the following section is only there for debug reasons. 
-        printSummary();
+        // TODO: Look into generating the random word while calling generateAndAddStrings() in the current round or 
+        // somewhere else in the current round along the main progression line where the user is 
+        // guaranteed to be exposed to the secret messge needed below. 
+        // Or, the secret word could be in one of the other game modes (possibly streak mode)
+        UserIO.INSTANCE.printToTerminal("Alright. We are done with all the guesswork.\n");
+        UserIO.INSTANCE.printToTerminal("Here's how well you did this round.\n\n");
         
+        // TODO: Look into printing the letter grade here as an alternative since the user does not need
+        // to know all the information about their performance unless it is the end of the round 
+        // and they can't do anything else to change how well they performed (since that's very cheatsy)
+        printSummary();
+
         UserIO.INSTANCE.printToTerminal("Are you satisfied with the above results?\n");
-        String response = UserIO.INSTANCE.scanner.nextLine();
+        UserIO.INSTANCE.printToTerminal("If not, type the secret message if you want to enable cheats on.\n");
+        String message = UserIO.INSTANCE.scanner.nextLine();
         UserIO.INSTANCE.printToTerminal("\n");
 
-        while ((response.toLowerCase().charAt(0) == 'n') || (response.toLowerCase().charAt(0) == 'c')) {
-            if (changeFlag) {
-                printSummary();
-                changeFlag = false;
-            }
-            UserIO.INSTANCE.printToTerminal("Please type in the string that you wish to change the status of.\n");
-            String selectedString = UserIO.INSTANCE.scanner.nextLine();
-            UserIO.INSTANCE.printToTerminal("\n");
-            if (generatedStrings.indexOf(new DeterminedString(selectedString, false)) == -1) {
-                UserIO.INSTANCE.printToTerminal("That was an invalid string. Try typing in one of the generated strings below.\n\n");
-                printSummary();
-                continue;
-            }
-            try {
-                boolean status = dsl.getDSstatus(selectedString);
-                int prevCStrings = changedStrings.size();
-                promptforChangeStatus(selectedString, !status);
-                changeFlag = (changedStrings.size() != prevCStrings);
-            } catch (DeterminedStringNotFoundException dsnfe) {
-                UserIO.INSTANCE.printToTerminal("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
-            } finally {
-                UserIO.INSTANCE.printToTerminal("Is that all??? If you do still wish to make any more changes, type \"continue\".\n");
-                response = UserIO.INSTANCE.scanner.nextLine();
-                UserIO.INSTANCE.printToTerminal("\n");
-            }
+        // TODO: Update the secret message to the one that is generated when it gets implemented
+        if (message.contentEquals("message")) {
+            secretCheats();
+        } else {
+            UserIO.INSTANCE.printToTerminal("TOOOOOOO BAD!! You missed your chance.\nHINT: Try looking for it in one of the other game modes.\n\n");
         }
+
         UserIO.INSTANCE.printToTerminal("That is the end of this round for the Guessing Game Mode.\n\n");
         UserIO.INSTANCE.printToTerminal("END OF ROUND SUMMARY:\n");
         printSummary();
@@ -203,7 +179,71 @@ public class GuessingGameMode extends GameMode {
         UserIO.INSTANCE.printToTerminal("\n");
     }
 
-    // A helper method that changes the status of a determined string in the DSL depending on the user's input
+    @Override
+    // This function prints a summary of the guesses made by the user as changes are made to 
+    // the DSL (the in-game library), particularly relating to the strings generated this 
+    // round, whether if one of them was recently added or had their word status changed.
+    protected void printSummaryRoundInProgress() {
+        for (int i = 0; i < generatedStrings.size(); i++) {
+            DeterminedString ds = generatedStrings.get(i);
+            UserIO.INSTANCE.printToTerminal((i + 1) + ". " + ds.getString() + "\n");
+            UserIO.INSTANCE.printToTerminal("Your Guess - "+ (ds.isWord() ? "A Word" : "Not A Word") +"\n");
+            if (addedStrings.contains(ds.getString())) {
+                UserIO.INSTANCE.printToTerminal("This string was recently added into the in-game library in this round.\n");
+            }
+            if (changedStrings.contains(ds.getString())) {
+                try {
+                    UserIO.INSTANCE.printToTerminal("The status of the string was changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") +"\n");
+                } catch (DeterminedStringNotFoundException dsnfe) {
+                    UserIO.INSTANCE.printToTerminal("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN.\n");
+                }
+            }
+            UserIO.INSTANCE.printToTerminal("\n");
+        }
+    }
+
+    // A secret helper method that runs when the user inputs the correct secret message to enable cheats.
+    // This method allows the user to change the status of any of the generated strings in the DSL.
+    // Currently the generation of the secret message has not been implemented and is static, while 
+    // the intended functionality is to have the secret message be generated throughout the same round
+    // or in one of the other game modes.
+    // The following method was only present as way to debug promptForChanegStatus() and printSummary() methods
+    private void secretCheats() {
+        UserIO.INSTANCE.printToTerminal("OK. YOU FOUND IT!\nYou got lucky... maybe.\n\n");
+
+        boolean changeFlag = true;
+        String response = "";
+
+        do {
+            if (changeFlag) {
+                printSummary();
+                changeFlag = false;
+            }
+            UserIO.INSTANCE.printToTerminal("Please type in the string that you wish to change the status of.\n");
+            String selectedString = UserIO.INSTANCE.scanner.nextLine();
+            UserIO.INSTANCE.printToTerminal("\n");
+            if (generatedStrings.indexOf(new DeterminedString(selectedString, false)) == -1) {
+                UserIO.INSTANCE.printToTerminal("That was an invalid string. Try typing in one of the generated strings below.\n\n");
+                printSummary();
+                continue;
+            }
+            try {
+                boolean status = dsl.getDSstatus(selectedString);
+                int prevCStrings = changedStrings.size();
+                promptforChangeStatus(selectedString, !status);
+                changeFlag = (changedStrings.size() != prevCStrings);
+            } catch (DeterminedStringNotFoundException dsnfe) {
+                UserIO.INSTANCE.printToTerminal("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN!!!!\n");
+            } finally {
+                UserIO.INSTANCE.printToTerminal("Is that all??? If you do still wish to make any more changes, type \"continue\".\n");
+                response = UserIO.INSTANCE.scanner.nextLine();
+                UserIO.INSTANCE.printToTerminal("\n");
+            }
+        }
+        while ((response.toLowerCase().charAt(0) == 'n') || (response.toLowerCase().charAt(0) == 'c'));
+    }
+
+    // A secret helper method that changes the status of a determined string in the DSL depending on the user's input.
     // The user is asked whether they would like to change the status of the given string to a 
     // particular word status determined by the given boolean. The user is then informed of the 
     // result of their choice and are informed that they are able to make this change at a later time.
@@ -228,29 +268,6 @@ public class GuessingGameMode extends GameMode {
         }
 
         UserIO.INSTANCE.printToTerminal("The status of the string " + selectedString + " can be changed at the end of the game or in the second game mode.\n\n");
-    }
-
-    @Override
-    // This function prints a summary of the guesses made by the user as changes are made to 
-    // the DSL (the in-game library), particularly relating to the strings generated this 
-    // round, whether if one of them was recently added or had their word status changed.
-    protected void printSummaryRoundInProgress() {
-        for (int i = 0; i < generatedStrings.size(); i++) {
-            DeterminedString ds = generatedStrings.get(i);
-            UserIO.INSTANCE.printToTerminal((i + 1) + ". " + ds.getString() + "\n");
-            UserIO.INSTANCE.printToTerminal("Your Guess - "+ (ds.isWord() ? "A Word" : "Not A Word") +"\n");
-            if (addedStrings.contains(ds.getString())) {
-                UserIO.INSTANCE.printToTerminal("This string was recently added into the in-game library in this round.\n");
-            }
-            if (changedStrings.contains(ds.getString())) {
-                try {
-                    UserIO.INSTANCE.printToTerminal("The status of the string was changed from " + (dsl.getDSstatus(ds.getString()) ? "not a word to a word" : "a word to not a word") +"\n");
-                } catch (DeterminedStringNotFoundException dsnfe) {
-                    UserIO.INSTANCE.printToTerminal("\nERROR: THIS WAS NOT SUPPOSED TO HAPPEN.\n");
-                }
-            }
-            UserIO.INSTANCE.printToTerminal("\n");
-        }
     }
 
     @Override
@@ -282,8 +299,6 @@ public class GuessingGameMode extends GameMode {
     // Alternatively, a method to return an enum value for letter grades could be implemented for 
     // this method if the enum proves to be reusable in other places.
     private String getPerformanceMessage(int score, int n) {
-        // TODO: Look into if returning a locally defined variable is the right thing to do
-        // Also try a better name for the method next time.
         String performanceMessage;
         double delta = 0.000001, scoreOutOfTotal = (double) score/(double) n;
         if (((scoreOutOfTotal - 0.90) >= delta) || (Math.abs(scoreOutOfTotal - 0.90) <= delta)) {

@@ -118,6 +118,31 @@ So, I made the changes to fix the inheritance relationship between the abstract 
     - Made quite a few alternative ideas regardingo how the cheats mode could be accessed by the user. This would be more appropriate since it does not make sense for the user to just be able to change the status of the strings in the in-game library. 
 - Changed the wording of a TODO in GuessingGameMode class (line 108)
 
+### 2nd July 2026 04:33 PM GMT +3
+In this commit, I changed up the user's access to being able to change the status of any of the generated strings using a secret method with the idea that it is a cheat that the user can gain access to by finding and inputing a secret message hidden somewhere in the game.
+I made some other changes that better fit this addition of hiding the accessibility of this cheat-like method removing lines wherever fit and added tasks onto my TODO list reminding myself to properly implement the generaton of the secret message for the secretCheats() method and to update other aspects of the GuessingGameMode class that were affected by this new addition.
+
+- Added a method to enable the cheats mode for the user utilizing previously implemented code called secretCheats() method in GuessingGameMode class
+    - This wmethod was added since it did not feel right that the user had access to changing the status of any generated string without any sort of restricted access to it. Now, it's hidden behind a secret message (that is static for now but it will be) generated or randomly selected witin the round or ine one of the other game modes to be implmented. 
+- Added lines to better suit the tone when calling the secretCheats() method including an if block in GuessingGameMode class (lines 127, 132 to 137).
+- Removed lines calling promptForChangeStatus() method in bootGameMode() method in GuessingGameMode class
+    - These were removed since that functionality should be locked behind the secret cheat method which would be accessed after the user is done guessing the word status of the generated strings
+- Removed local variable changeFlag and if block using the local variable in bootGameMode() method in GuessingGameMode class
+    - Since the local variable is no longer being updated, one branch of the if condition block would never be run. Now, bootGameMode() method always calls printSummaryRoundInProgress() after a guess is made by the user.
+- Swapped around the declaration and implementation of the prompForChangeStatus() method in the GuessingGameMode class
+    - Since this method is now only called in the secretCheats() method, it is now located under it at line 246. 
+- Swapped around the declaration and implementation of the printSymmaryRoundInProgress() method in the GuessingGameMode class
+    - This method is called before the secretCheats() helper method in the bootGameMode() method, so it is now located under it at line 206. 
+- Removed TODO regarding implementing the cheat method in GuessingGameMode class
+- Removed TODO to update the user once all the guessing has been done in GuessingGameMode class
+- Added TODO to generate the secret message for the secretCheats() method in GuessingGameMode class
+    - The secret message would need to be generated throughout the current round of the game mode or be generated in one of the other game modes and stored so that it is remembered when the user tries to use it in this game mode.
+- Added a TODO to update what information the user should be presented prior to the prompt asking for the secret message
+    - IMO it would be better if the user does not know all the information about the generated strings as those would be shown in secretCheats() method or at the end of the round.
+- Added a TODO reminding myself to update the if condition when the generation of the secret message has been implemented in GuessingGameMode class (line 131)
+- Added TODOs to update specifications of the class the and bootGameMode() method in GuessingGameMode class
+    - The specifications are a bit outdated since some of the logics and method to change the status of a generated string has been hidden behind a secret cheats method.
+
 General template
 ### Next commit : DATE TIME
 - Changes in ???
